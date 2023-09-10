@@ -1,0 +1,2255 @@
+---
+title: "DPA Project"
+author: "Sumanth Donthula & Ashmita Gupta"
+date: "2023-04-24"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+
+WaterQualityData=data.frame()
+
+
+for (x in 2017:2021) {
+  path="C:/Users/SRINU/Desktop/DPA Project/WQ_"
+  file=as.character(x)
+  filetype=".xlsx"
+  finalPath=paste(path,file,filetype,sep="")
+  DataByYear=read_excel(finalPath)
+  DataByYear=DataByYear[-1:-2,]
+  DataByYear=data.frame(DataByYear,x)
+  WaterQualityData=rbind(WaterQualityData,DataByYear)
+}
+
+
+colnames(WaterQualityData) =c('StateCode','StationName','State','TemperatureMin','TemperatureMax','DissolvedO2Min','DissolvedO2Max','pHMin','pHMax','ConductivityMin','ConductivityMax','BODMin','BODMax','NitrateMin','NitrateMax','FecalColiformMin','FecalColiformMax','TotalColiformMin','TotalColiformMax','year')
+
+
+```
+
+
+
+```{r}
+library(readxl)
+library(dplyr)
+library(zoo)
+
+AirQualityDataFrame=data.frame()
+
+for (x in 2017:2019) {
+  path="C:/Users/SRINU/Desktop/DPA Project/AQ_"
+  file=as.character(x)
+  filetype=".xlsx"
+# Specify the Excel file path
+file_path = paste(path,file,filetype,sep="")
+
+# Read all sheet names from the Excel file
+sheet_names = excel_sheets(file_path)
+
+# Create an empty list to store data frames
+all_sheets = list()
+
+# Loop through all sheet names
+for (sheet_name in sheet_names) {
+  # Read the sheet into a data frame
+  sheet_df = read_excel(file_path, sheet = sheet_name, range = NULL)
+  
+  # Check if the sheet is not blank (i.e., has rows and columns)
+  if (!is.null(dim(sheet_df))) {
+    measure=sheet_df[1,]
+    
+    sheet_df$measure=paste(na.omit(unlist(measure)), collapse = ", ")
+    sheet_df = sheet_df[-c(1, 2), ]
+    sheet_df = na.locf(sheet_df, na.rm = FALSE)
+    sheet_df$year=as.character(x)
+    
+    #colnames(sheet_df)=c('State','City','Location','MonitoringDays','Min','Max','Average','measure','year')
+    # Add the data frame to the list of all sheets
+    all_sheets[[sheet_name]] = sheet_df
+  }
+}
+
+# Combine all non-blank sheets into a single data frame
+merged_df = bind_rows(all_sheets)
+
+
+AirQualityDataFrame=rbind(AirQualityDataFrame,merged_df)
+
+}
+
+colnames(AirQualityDataFrame)=c('State','City','Location','MonitoringDays','Min','Max','Average','measure','year')
+
+
+library(dplyr)
+
+AirQualityDataFrame = AirQualityDataFrame %>% 
+  mutate(measure = case_when(
+    measure == "PM_{2.5} Concentration in µg/m^{3}" ~ "PM2.5",
+    measure == "PM_{10} Concentration in µg/m^{3}" ~ "PM10",
+    measure == "NO_{2} Concentration in µg/m^{3}" ~ "NO2",
+    measure == "SO_{2} Concentration in µg/m^{3}" ~ "SO2",
+    measure =="State, SO_{2} Concentration in µg/m^{3}"~"SO2",
+    measure =="PM_{10} concentrationµg/m^{3}"~"PM10",
+    measure =="NO_{2} concentration in µg/m^{3}"~"NO2",
+    measure =="PM_{2.5} concentration µg/m^{3}"~"PM2.5"
+  ))
+
+
+library(dplyr)
+
+
+# Convert Average column to numeric data type
+AirQualityDataFrame$Average = as.integer(AirQualityDataFrame$Average)
+
+# Aggregate data by year, state, city, and measure
+agg_AirQualityDataFrame = AirQualityDataFrame %>%
+  group_by(year, State, City, measure) %>%
+  summarize(Mean = mean(Average), .groups = "drop")
+
+
+library(tidyr)
+
+# Pivot the Type column into new columns
+agg_AirQualityDataFrame = pivot_wider(agg_AirQualityDataFrame, names_from = measure, values_from = Mean)
+
+agg_AirQualityDataFrames=agg_AirQualityDataFrame[agg_AirQualityDataFrame$year==2017,]
+
+```
+
+```{r}
+library(dplyr)
+
+
+# Group the data by year and calculate the mean of the PM10 column for each year
+means_by_year = agg_AirQualityDataFrames %>%
+  group_by(year) %>%
+  summarize(mean_PM10 = mean(PM10, na.rm = TRUE))
+
+# Join the means back to the original data frame by year
+agg_AirQualityDataFrame_filled = left_join(agg_AirQualityDataFrames, means_by_year, by = "year")
+
+# Fill missing PM10s in the PM10 column with the mean PM10 by year
+agg_AirQualityDataFrame_filled$PM10[is.na(agg_AirQualityDataFrame_filled$PM10)] = agg_AirQualityDataFrame_filled$mean_PM10[is.na(agg_AirQualityDataFrame_filled$PM10)]
+
+means_by_year = agg_AirQualityDataFrame_filled %>%
+  group_by(year) %>%
+  summarize(mean_NO2 = mean(NO2, na.rm = TRUE))
+
+# Join the means back to the original data frame by year
+agg_AirQualityDataFrame_filled = left_join(agg_AirQualityDataFrame_filled, means_by_year, by = "year")
+
+# Fill missing NO2s in the NO2 column with the mean NO2 by year
+agg_AirQualityDataFrame_filled$NO2[is.na(agg_AirQualityDataFrame_filled$NO2)] = agg_AirQualityDataFrame_filled$mean_NO2[is.na(agg_AirQualityDataFrame_filled$NO2)]
+
+
+means_by_year = agg_AirQualityDataFrame_filled %>%
+  group_by(year) %>%
+  summarize(mean_SO2 = mean(SO2,na.rm = TRUE))
+
+# Join the means back to the original data frame by year
+agg_AirQualityDataFrame_filled = left_join(agg_AirQualityDataFrame_filled, means_by_year, by = "year")
+
+# Fill missing SO2s in the SO2 column with the mean SO2 by year
+agg_AirQualityDataFrame_filled$SO2[is.na(agg_AirQualityDataFrame_filled$SO2)] = agg_AirQualityDataFrame_filled$mean_SO2[is.na(agg_AirQualityDataFrame_filled$SO2)]
+
+means_by_year = agg_AirQualityDataFrame_filled %>%
+  group_by(year) %>%
+  summarize(mean_PM2.5 = mean(PM2.5, na.rm = TRUE))
+
+# Join the means back to the original data frame by year
+agg_AirQualityDataFrame_filled = left_join(agg_AirQualityDataFrame_filled, means_by_year, by = "year")
+
+# Fill missing PM2.5s in the PM2.5 column with the mean PM2.5 by year
+agg_AirQualityDataFrame_filled$PM2.5[is.na(agg_AirQualityDataFrame_filled$PM2.5)] = agg_AirQualityDataFrame_filled$mean_PM2.5[is.na(agg_AirQualityDataFrame_filled$PM2.5)]
+
+AirQualityDF=agg_AirQualityDataFrame_filled[,c(-8,-9,-10,-11)]
+
+
+
+```
+
+
+
+```{r}
+
+library(readxl)
+
+AQ_2021 = read_excel("C:/Users/SRINU/Desktop/DPA Project/AQ_2021.xlsx")
+
+AQ_2021=AQ_2021[-1:-2,]
+
+AQ_2021$year='2021'
+
+AQ_2021 = AQ_2021[, c(7,1,2,3,4,5,6)]
+
+AQ_2021[AQ_2021 == "-"] = NA
+
+
+colnames(AQ_2021)=c('year','State','City','SO2','PM2.5','NO2','PM10')
+
+AQ_2021$SO2		=as.numeric(AQ_2021$SO2)
+AQ_2021$PM2.5   =as.numeric(AQ_2021$PM2.5)
+AQ_2021$NO2     =as.numeric(AQ_2021$PM2.5)
+AQ_2021$PM10    =as.numeric(AQ_2021$PM10)
+
+
+AQ_2021$SO2[is.na(AQ_2021$SO2)] = mean(AQ_2021$SO2, na.rm = TRUE)
+AQ_2021$PM10[is.na(AQ_2021$PM10)] = mean(AQ_2021$PM10, na.rm = TRUE)
+AQ_2021$PM2.5[is.na(AQ_2021$PM2.5)] = mean(AQ_2021$PM2.5, na.rm = TRUE)
+AQ_2021$NO2[is.na(AQ_2021$NO2)] = mean(AQ_2021$NO2, na.rm = TRUE)
+
+
+
+AQ_2021 = AQ_2021[, c("year","State","City","NO2","PM10","SO2","PM2.5")]
+
+
+AirQualityDataset = rbind(AirQualityDF, AQ_2021)
+
+```
+
+
+```{r}
+library(stringr)
+
+
+View(WaterQualityData)
+
+
+WaterQualityData$StationName = ifelse(grepl("AT", WaterQualityData$StationName), sub(".*AT\\s+(\\w+).*", "\\1", WaterQualityData$StationName), WaterQualityData$StationName)
+
+
+WaterQualityData$StationName = ifelse(grepl(",", WaterQualityData$StationName), sub(".+,\\s*(\\S+)$", "\\1", WaterQualityData$StationName), WaterQualityData$StationName)
+
+
+
+
+```
+
+
+
+
+```{r}
+
+names(WaterQualityData)[2] = "City"
+
+```
+
+
+```{r}
+
+WaterQualityData
+
+View(AirQualityDataset)
+
+AirQualityDataset$State=toupper(AirQualityDataset$State)
+AirQualityDataset$City=toupper(AirQualityDataset$City)
+
+AirQualityDataset$NO2=as.numeric(AirQualityDataset$NO2)
+AirQualityDataset$PM10=as.numeric(AirQualityDataset$PM10)
+AirQualityDataset$SO2=as.numeric(AirQualityDataset$SO2)
+AirQualityDataset$PM2.5=as.numeric(AirQualityDataset$PM2.5)
+
+
+AirQualityDataset$year=as.integer(AirQualityDataset$year)
+
+finalDataset = merge(WaterQualityData, AirQualityDataset, by = c("State","City","year"), all.x = TRUE)
+
+
+
+grouped_df1 = aggregate(cbind(NO2, PM10,PM2.5,SO2) ~ State + year, data = AirQualityDataset, mean)
+
+grouped_df2 = aggregate(cbind(NO2, PM10,PM2.5,SO2) ~ State, data = AirQualityDataset, mean)
+
+
+
+finalDataset = merge(finalDataset, grouped_df1, by = c("State","year"), all.x = TRUE)
+
+finalDataset = merge(finalDataset, grouped_df2, by = c("State"), all.x = TRUE)
+
+fd=finalDataset
+
+finalDataset = subset(fd, select = -c(21, 22, 23, 24, 25, 26, 27, 28))
+
+```
+
+```{r}
+
+finalDataset[finalDataset == "-"] = NA
+
+
+finalDataset = subset(finalDataset, select = -StateCode)
+
+colSums(is.na(finalDataset))
+```
+
+```{r}
+waterQuality_2017=finalDataset[finalDataset$year == 2017,]
+
+waterQuality_2017$TemperatureMin     =as.numeric(waterQuality_2017$TemperatureMin)
+waterQuality_2017$TemperatureMax     =as.numeric(waterQuality_2017$TemperatureMin)
+waterQuality_2017$DissolvedO2Min     =as.numeric(waterQuality_2017$DissolvedO2Min)
+waterQuality_2017$DissolvedO2Max     =as.numeric(waterQuality_2017$DissolvedO2Max)
+waterQuality_2017$pHMin              =as.numeric(waterQuality_2017$pHMin)
+waterQuality_2017$pHMax              =as.numeric(waterQuality_2017$pHMax)
+waterQuality_2017$ConductivityMin    =as.numeric(waterQuality_2017$ConductivityMin)
+waterQuality_2017$ConductivityMax    =as.numeric(waterQuality_2017$ConductivityMax)
+waterQuality_2017$BODMin             =as.numeric(waterQuality_2017$BODMin)
+waterQuality_2017$BODMax             =as.numeric(waterQuality_2017$BODMax)
+waterQuality_2017$NitrateMin         =as.numeric(waterQuality_2017$NitrateMin)
+waterQuality_2017$NitrateMax         =as.numeric(waterQuality_2017$NitrateMax)
+waterQuality_2017$FecalColiformMin   =as.numeric(waterQuality_2017$FecalColiformMin)
+waterQuality_2017$FecalColiformMax   =as.numeric(waterQuality_2017$FecalColiformMax)
+waterQuality_2017$TotalColiformMin   =as.numeric(waterQuality_2017$TotalColiformMin)
+waterQuality_2017$TotalColiformMax   =as.numeric(waterQuality_2017$TotalColiformMax)
+waterQuality_2017$NO2                =as.numeric(waterQuality_2017$NO2)
+waterQuality_2017$PM10               =as.numeric(waterQuality_2017$PM10)
+
+cols=c("TemperatureMin"   
+,"TemperatureMax"  
+,"DissolvedO2Min"   
+,"DissolvedO2Max"   
+,"pHMin"            
+,"pHMax"            
+,"ConductivityMin"  
+,"ConductivityMax" 
+,"BODMin"           
+,"BODMax"           
+,"NitrateMin"       
+,"NitrateMax"       
+,"FecalColiformMin" 
+,"FecalColiformMax"
+,"TotalColiformMin" 
+,"TotalColiformMax" 
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")
+
+waterQuality_2017_Avg=waterQuality_2017
+
+
+# Calculate the average values for each variable
+waterQuality_2017_Avg$TemperatureAvg = (waterQuality_2017_Avg$TemperatureMin + waterQuality_2017_Avg$TemperatureMax) / 2
+waterQuality_2017_Avg$DissolvedO2Avg = (waterQuality_2017_Avg$DissolvedO2Min + waterQuality_2017_Avg$DissolvedO2Max) / 2
+waterQuality_2017_Avg$pHAvg = (waterQuality_2017_Avg$pHMin + waterQuality_2017_Avg$pHMax) / 2
+waterQuality_2017_Avg$ConductivityAvg = (waterQuality_2017_Avg$ConductivityMin + waterQuality_2017_Avg$ConductivityMax) / 2
+waterQuality_2017_Avg$FecalColiformAvg = (waterQuality_2017_Avg$FecalColiformMin + waterQuality_2017_Avg$FecalColiformMax) / 2
+waterQuality_2017_Avg$BODAvg = (waterQuality_2017_Avg$BODMin + waterQuality_2017_Avg$BODMax) / 2
+waterQuality_2017_Avg$NitrateAvg = (waterQuality_2017_Avg$NitrateMin + waterQuality_2017_Avg$NitrateMax) / 2
+
+waterQuality_2017_Avg$TotalColiformAvg = (waterQuality_2017_Avg$TotalColiformMin + waterQuality_2017_Avg$TotalColiformMax) / 2
+
+waterQuality_2017_Avg = subset(waterQuality_2017_Avg,select=-c(TemperatureMin   
+,TemperatureMax  
+,DissolvedO2Min   
+,DissolvedO2Max   
+,pHMin            
+,pHMax            
+,ConductivityMin  
+,ConductivityMax 
+,BODMin           
+,BODMax           
+,NitrateMin       
+,NitrateMax       
+,FecalColiformMin 
+,FecalColiformMax
+,TotalColiformMin 
+,TotalColiformMax))
+
+numCols=c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"           
+,"NitrateAvg"   
+,"FecalColiformAvg"
+,"TotalColiformAvg"
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")
+
+for (col in colnames(waterQuality_2017_Avg)) {
+  # Check if column has any NAs
+  if (sum(is.na(waterQuality_2017_Avg[, col])) > 0) {
+    # Replace NAs with mean value of the column
+    waterQuality_2017_Avg[is.na(waterQuality_2017_Avg[, col]), col] = mean(waterQuality_2017_Avg[, col], na.rm = TRUE)
+  }
+}
+
+
+for (col in numCols) {
+  # Create the histogram plot
+  hist(waterQuality_2017_Avg[[col]], main = col, xlab = col)
+} 
+
+
+cov_mat = cov(waterQuality_2017_Avg[, numCols])
+
+corr_matrix = cor(waterQuality_2017_Avg[, numCols])
+
+
+
+library(corrplot)
+
+corrplot(corr_matrix)
+
+
+```
+
+```{r}
+waterQuality_2017_Avg = aggregate(cbind(TemperatureAvg,   
+                          DissolvedO2Avg,   
+                          pHAvg,            
+                          ConductivityAvg,  
+                          BODAvg,           
+                          NitrateAvg, 
+                          FecalColiformAvg,
+                          TotalColiformAvg,
+                          NO2,              
+                          PM10,             
+                          SO2,              
+                          PM2.5) ~ State, 
+                    data = waterQuality_2017_Avg, 
+                    mean)
+
+```
+
+```{r}
+
+WaterQualityAlone = waterQuality_2017_Avg[, c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"
+,"FecalColiformAvg"
+,"NitrateAvg"      
+,"TotalColiformAvg"
+)]
+
+# Center and scale the data
+WaterQualityAlone_scaled = scale(WaterQualityAlone)
+
+# Perform PCA
+pca_result = princomp(WaterQualityAlone_scaled, center = TRUE, scale. = TRUE)
+
+# Print the summary of PCA results
+summary(pca_result)
+
+#reverse the signs
+pca_result$rotation = -1*pca_result$rotation
+
+#display principal components
+pca_result$rotation
+
+var_explained = pca_result$sdev^2 / sum(pca_result$sdev^2)
+
+print(var_explained)
+
+pc.comp = pca_result$scores
+
+#87%
+pc.comp1 = -1*pc.comp[,1]
+pc.comp2 = -1*pc.comp[,2]
+pc.comp3 = -1*pc.comp[,3]
+pc.comp4 = -1*pc.comp[,4]
+pc.comp5= -1*pc.comp[,5]
+pc.comp6 = -1*pc.comp[,6]
+
+library(factoextra)
+library(tidyr)
+library(ggplot2)
+
+X = cbind(pc.comp1, pc.comp2,pc.comp3, pc.comp4,pc.comp5,pc.comp6)
+
+X
+
+k =6
+kmeans_model = kmeans(X, centers = k,nstart=1)
+
+
+waterQuality_2017_Avg$cluster=kmeans_model$cluster
+
+
+fviz_cluster(kmeans_model, data = X)
+
+mean_by_group = aggregate(cbind(TemperatureAvg, DissolvedO2Avg, pHAvg,ConductivityAvg,BODAvg,NitrateAvg,FecalColiformAvg,TotalColiformAvg) ~ cluster, data = waterQuality_2017_Avg, mean)
+
+table(waterQuality_2017_Avg$State,waterQuality_2017_Avg$cluster)
+
+
+WaterQualityAlone
+
+Result_2017_water= mean_by_group[order(mean_by_group$TotalColiformAvg, mean_by_group$BODAvg, mean_by_group$DissolvedO2Avg,mean_by_group$FecalColiformAvg), ]
+
+
+Result_2017_water$Rank=c("A", "B", "C", "D", "E","F")
+
+
+
+
+Water2017 = merge(waterQuality_2017_Avg, Result_2017_water[,c("cluster","Rank")], by = "cluster", all.x = TRUE)
+
+```
+
+
+```{r}
+
+pca_data = waterQuality_2017_Avg[, c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"
+,"FecalColiformAvg"
+,"NitrateAvg"      
+,"TotalColiformAvg"
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")]
+
+# Center and scale the data
+pca_data_scaled = scale(pca_data)
+
+# Perform PCA
+pca_result = princomp(pca_data_scaled, center = TRUE, scale. = TRUE)
+
+# Print the summary of PCA results
+summary(pca_result)
+
+#reverse the signs
+pca_result$rotation = -1*pca_result$rotation
+
+#display principal components
+pca_result$rotation
+
+var_explained = pca_result$sdev^2 / sum(pca_result$sdev^2)
+
+print(var_explained)
+
+pc.comp = pca_result$scores
+
+#84%
+pc.comp1 = -1*pc.comp[,1]
+pc.comp2 = -1*pc.comp[,2]
+pc.comp3 = -1*pc.comp[,3]
+pc.comp4 = -1*pc.comp[,4]
+pc.comp5= -1*pc.comp[,5]
+
+```
+
+```{r}
+
+library(factoextra)
+library(tidyr)
+library(ggplot2)
+
+X = cbind(pc.comp1, pc.comp2,pc.comp3, pc.comp4,pc.comp5)
+
+X
+
+k =6
+kmeans_model = kmeans(X, centers = k,nstart=1)
+
+
+waterQuality_2017_Avg$cluster=kmeans_model$cluster
+
+
+fviz_cluster(kmeans_model, data = X)
+
+mean_by_group = aggregate(cbind(TemperatureAvg, DissolvedO2Avg, pHAvg,ConductivityAvg,BODAvg,NitrateAvg,FecalColiformAvg,TotalColiformAvg,NO2,PM10,SO2,PM2.5) ~ cluster, data = waterQuality_2017_Avg, mean)
+
+table(waterQuality_2017_Avg$State,waterQuality_2017_Avg$cluster)
+
+
+waterQuality_2017_Avg
+
+Result_2017= mean_by_group[order(mean_by_group$TotalColiformAvg, mean_by_group$BODAvg, mean_by_group$DissolvedO2Avg,mean_by_group$NO2,mean_by_group$FecalColiformAvg,mean_by_group$PM10,mean_by_group$SO2,mean_by_group$PM2.5), ]
+
+
+Result_2017$Rank=c("A", "B", "C", "D", "E","F")
+
+class(Result_2017$cluster)
+class(waterQuality_2017_Avg$cluster)
+
+
+WaterAir2017 = merge(waterQuality_2017_Avg, Result_2017[,c("cluster","Rank")], by = "cluster", all.x = TRUE)
+
+
+```
+
+
+
+
+
+```{r}
+
+library(factoextra)
+library(tidyr)
+library(ggplot2)
+
+waterQuality_2017_Avg_clust = waterQuality_2017_Avg[, c("TemperatureAvg"   
+,"DissolvedO2Avg"
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"
+,"FecalColiformAvg"
+,"NitrateAvg"      
+,"TotalColiformAvg"
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")]
+
+selected_cols = c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"    
+,"FecalColiformAvg"
+,"NitrateAvg"      
+,"TotalColiformAvg"
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")
+
+data_selected = waterQuality_2017_Avg[, selected_cols]
+
+scaled_df = waterQuality_2017_Avg
+scaled_df = subset(waterQuality_2017_Avg, select = c(State,TemperatureAvg   
+,DissolvedO2Avg   
+,pHAvg            
+,ConductivityAvg  
+,BODAvg
+,FecalColiformAvg
+,NitrateAvg      
+,TotalColiformAvg
+,NO2              
+,PM10             
+,SO2              
+,PM2.5))
+
+
+rownames(scaled_df)=scaled_df$State
+
+
+k =6
+kmeans_model = kmeans(scaled_df[,-1], centers = k,nstart=1)
+                         
+# Print cluster centers
+print(kmeans_model$centers)
+
+# Print cluster membership for each observation
+waterQuality_2017_Avg$cluster=kmeans_model$cluster
+
+# create a new column to store the classification
+
+
+# view the updated dataset with the new classification column
+head(waterQuality_2017_Avg)
+
+
+
+fviz_cluster(kmeans_model, data = scaled_df[,-1])
+
+mean_by_group = aggregate(cbind(TemperatureAvg, DissolvedO2Avg, pHAvg,ConductivityAvg,BODAvg,FecalColiformAvg,NitrateAvg,TotalColiformAvg,NO2,PM10,SO2,PM2.5) ~ cluster, data = waterQuality_2017_Avg, mean)
+
+table(waterQuality_2017_Avg$State,waterQuality_2017_Avg$cluster)
+
+
+waterQuality_2017_Avg
+
+Result_2017= mean_by_group[order(mean_by_group$TotalColiformAvg, mean_by_group$BODAvg, mean_by_group$DissolvedO2Avg,mean_by_group$NO2,mean_by_group$FecalColiformAvg,mean_by_group$PM10,mean_by_group$SO2,mean_by_group$PM2.5), ]
+
+
+Result_2017$Rank=c("A", "B", "C", "D", "E","F")
+
+class(Result_2017$cluster)
+class(waterQuality_2017_Avg$cluster)
+
+
+
+
+WaterAir2017 = merge(waterQuality_2017_Avg, Result_2017[,c("cluster","Rank")], by = "cluster", all.x = TRUE)
+
+
+```
+
+
+
+```{r}
+
+waterQuality_2018=finalDataset[finalDataset$year == 2018,]
+waterQuality_2018$TemperatureMin     =as.numeric(waterQuality_2018$TemperatureMin)
+waterQuality_2018$TemperatureMax     =as.numeric(waterQuality_2018$TemperatureMin)
+waterQuality_2018$DissolvedO2Min     =as.numeric(waterQuality_2018$DissolvedO2Min)
+waterQuality_2018$DissolvedO2Max     =as.numeric(waterQuality_2018$DissolvedO2Max)
+waterQuality_2018$pHMin              =as.numeric(waterQuality_2018$pHMin)
+waterQuality_2018$pHMax              =as.numeric(waterQuality_2018$pHMax)
+waterQuality_2018$ConductivityMin    =as.numeric(waterQuality_2018$ConductivityMin)
+waterQuality_2018$ConductivityMax    =as.numeric(waterQuality_2018$ConductivityMax)
+waterQuality_2018$BODMin             =as.numeric(waterQuality_2018$BODMin)
+waterQuality_2018$BODMax             =as.numeric(waterQuality_2018$BODMax)
+waterQuality_2018$NitrateMin         =as.numeric(waterQuality_2018$NitrateMin)
+waterQuality_2018$NitrateMax         =as.numeric(waterQuality_2018$NitrateMax)
+waterQuality_2018$FecalColiformMin   =as.numeric(waterQuality_2018$FecalColiformMin)
+waterQuality_2018$FecalColiformMax   =as.numeric(waterQuality_2018$FecalColiformMax)
+waterQuality_2018$TotalColiformMin   =as.numeric(waterQuality_2018$TotalColiformMin)
+waterQuality_2018$TotalColiformMax   =as.numeric(waterQuality_2018$TotalColiformMax)
+waterQuality_2018$NO2                =as.numeric(waterQuality_2018$NO2)
+waterQuality_2018$PM10               =as.numeric(waterQuality_2018$PM10)
+
+cols=c("TemperatureMin"   
+,"TemperatureMax"  
+,"DissolvedO2Min"   
+,"DissolvedO2Max"   
+,"pHMin"            
+,"pHMax"            
+,"ConductivityMin"  
+,"ConductivityMax" 
+,"BODMin"           
+,"BODMax"           
+,"NitrateMin"       
+,"NitrateMax"       
+,"FecalColiformMin" 
+,"FecalColiformMax"
+,"TotalColiformMin" 
+,"TotalColiformMax" 
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")
+
+waterQuality_2018_Avg=waterQuality_2018
+
+
+# Calculate the average values for each variable
+waterQuality_2018_Avg$TemperatureAvg = (waterQuality_2018_Avg$TemperatureMin + waterQuality_2018_Avg$TemperatureMax) / 2
+waterQuality_2018_Avg$DissolvedO2Avg = (waterQuality_2018_Avg$DissolvedO2Min + waterQuality_2018_Avg$DissolvedO2Max) / 2
+waterQuality_2018_Avg$pHAvg = (waterQuality_2018_Avg$pHMin + waterQuality_2018_Avg$pHMax) / 2
+waterQuality_2018_Avg$ConductivityAvg = (waterQuality_2018_Avg$ConductivityMin + waterQuality_2018_Avg$ConductivityMax) / 2
+waterQuality_2018_Avg$FecalColiformAvg = (waterQuality_2018_Avg$FecalColiformMin + waterQuality_2018_Avg$FecalColiformMax) / 2
+waterQuality_2018_Avg$BODAvg = (waterQuality_2018_Avg$BODMin + waterQuality_2018_Avg$BODMax) / 2
+waterQuality_2018_Avg$NitrateAvg = (waterQuality_2018_Avg$NitrateMin + waterQuality_2018_Avg$NitrateMax) / 2
+
+waterQuality_2018_Avg$TotalColiformAvg = (waterQuality_2018_Avg$TotalColiformMin + waterQuality_2018_Avg$TotalColiformMax) / 2
+
+waterQuality_2018_Avg = subset(waterQuality_2018_Avg,select=-c(TemperatureMin   
+,TemperatureMax  
+,DissolvedO2Min   
+,DissolvedO2Max   
+,pHMin            
+,pHMax            
+,ConductivityMin  
+,ConductivityMax 
+,BODMin           
+,BODMax           
+,NitrateMin       
+,NitrateMax       
+,FecalColiformMin 
+,FecalColiformMax
+,TotalColiformMin 
+,TotalColiformMax))
+
+numCols=c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"           
+,"NitrateAvg"   
+,"TotalColiformAvg"
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")
+
+for (col in colnames(waterQuality_2018_Avg)) {
+  # Check if column has any NAs
+  if (sum(is.na(waterQuality_2018_Avg[, col])) > 0) {
+    # Replace NAs with mean value of the column
+    waterQuality_2018_Avg[is.na(waterQuality_2018_Avg[, col]), col] = mean(waterQuality_2018_Avg[, col], na.rm = TRUE)
+  }
+}
+
+
+for (col in numCols) {
+  # Create the histogram plot
+  hist(waterQuality_2018_Avg[[col]], main = col, xlab = col)
+} 
+
+
+cov_mat = cov(waterQuality_2018_Avg[, numCols])
+
+corr_matrix = cor(waterQuality_2018_Avg[, numCols])
+
+library(corrplot)
+
+corrplot(corr_matrix)
+
+
+waterQuality_2018_Avg = aggregate(cbind(TemperatureAvg,   
+                          DissolvedO2Avg,   
+                          pHAvg,            
+                          ConductivityAvg,  
+                          BODAvg,           
+                          NitrateAvg,
+                          FecalColiformAvg,
+                          TotalColiformAvg,
+                          NO2,              
+                          PM10,             
+                          SO2,              
+                          PM2.5) ~ State, 
+                    data = waterQuality_2018_Avg, 
+                    mean)
+
+pca_data = waterQuality_2018_Avg[, c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"           
+,"NitrateAvg"  
+,"FecalColiformAvg"
+,"TotalColiformAvg"
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")]
+
+# Center and scale the data
+pca_data_scaled = scale(pca_data)
+
+# Perform PCA
+pca_result = princomp(pca_data_scaled, center = TRUE, scale. = TRUE)
+
+# Print the summary of PCA results
+summary(pca_result)
+
+#reverse the signs
+pca_result$rotation = -1*pca_result$rotation
+
+#display principal components
+pca_result$rotation
+
+var_explained = pca_result$sdev^2 / sum(pca_result$sdev^2)
+
+print("Before")
+print(var_explained)
+
+pc.comp = pca_result$scores
+
+#86%
+pc.comp1 = -1*pc.comp[,1]
+pc.comp2 = -1*pc.comp[,2]
+pc.comp3 = -1*pc.comp[,3]
+pc.comp4 = -1*pc.comp[,4]
+
+
+
+library(factoextra)
+library(tidyr)
+library(ggplot2)
+
+X = cbind(pc.comp1, pc.comp2,pc.comp3, pc.comp4)
+
+X
+
+k =6
+kmeans_model = kmeans(X, centers = k,nstart=1)
+
+
+waterQuality_2018_Avg$cluster=kmeans_model$cluster
+
+
+fviz_cluster(kmeans_model, data = X)
+
+mean_by_group = aggregate(cbind(TemperatureAvg, DissolvedO2Avg, pHAvg,ConductivityAvg,BODAvg,NitrateAvg,FecalColiformAvg,TotalColiformAvg,NO2,PM10,SO2,PM2.5) ~ cluster, data = waterQuality_2018_Avg, mean)
+
+table(waterQuality_2018_Avg$State,waterQuality_2018_Avg$cluster)
+
+
+waterQuality_2018_Avg
+
+Result_2018= mean_by_group[order(mean_by_group$TotalColiformAvg, mean_by_group$BODAvg, mean_by_group$DissolvedO2Avg,mean_by_group$NO2,mean_by_group$FecalColiformAvg,mean_by_group$PM10,mean_by_group$SO2,mean_by_group$PM2.5), ]
+
+
+Result_2018$Rank=c("A", "B", "C", "D", "E","F")
+
+class(Result_2018$cluster)
+class(waterQuality_2018_Avg$cluster)
+
+
+WaterAir2018 = merge(waterQuality_2018_Avg, Result_2018[,c("cluster","Rank")], by = "cluster", all.x = TRUE)
+
+WaterQualityAlone = waterQuality_2018_Avg[, c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"
+,"FecalColiformAvg"
+,"NitrateAvg"      
+,"TotalColiformAvg"
+)]
+
+# Center and scale the data
+WaterQualityAlone_scaled = scale(WaterQualityAlone)
+
+# Perform PCA
+pca_result = princomp(WaterQualityAlone_scaled, center = TRUE, scale. = TRUE)
+
+# Print the summary of PCA results
+summary(pca_result)
+
+#reverse the signs
+pca_result$rotation = -1*pca_result$rotation
+
+#display principal components
+pca_result$rotation
+
+var_explained = pca_result$sdev^2 / sum(pca_result$sdev^2)
+print("After")
+print(var_explained)
+
+pc.comp = pca_result$scores
+
+#86%
+pc.comp1 = -1*pc.comp[,1]
+pc.comp2 = -1*pc.comp[,2]
+pc.comp3 = -1*pc.comp[,3]
+pc.comp4 = -1*pc.comp[,4]
+pc.comp5= -1*pc.comp[,5]
+pc.comp6 = -1*pc.comp[,6]
+
+library(factoextra)
+library(tidyr)
+library(ggplot2)
+
+X = cbind(pc.comp1, pc.comp2,pc.comp3, pc.comp4,pc.comp5,pc.comp6)
+
+X
+
+k =6
+kmeans_model = kmeans(X, centers = k,nstart=1)
+
+
+waterQuality_2018_Avg$cluster=kmeans_model$cluster
+
+
+fviz_cluster(kmeans_model, data = X)
+
+mean_by_group = aggregate(cbind(TemperatureAvg, DissolvedO2Avg, pHAvg,ConductivityAvg,BODAvg,NitrateAvg,FecalColiformAvg,TotalColiformAvg) ~ cluster, data = waterQuality_2018_Avg, mean)
+
+table(waterQuality_2018_Avg$State,waterQuality_2018_Avg$cluster)
+
+
+WaterQualityAlone
+
+Result_2018_water= mean_by_group[order(mean_by_group$TotalColiformAvg, mean_by_group$BODAvg, mean_by_group$DissolvedO2Avg,mean_by_group$FecalColiformAvg), ]
+
+
+Result_2018_water$Rank=c("A", "B", "C", "D", "E","F")
+
+class(waterQuality_2018_Avg$cluster)
+class(waterQuality_2018_Avg$cluster)
+
+
+Water2018 = merge(waterQuality_2018_Avg, Result_2018_water[,c("cluster","Rank")], by = "cluster", all.x = TRUE)
+
+
+```
+
+
+```{r}
+
+
+waterQuality_2019=finalDataset[finalDataset$year == 2019,]
+waterQuality_2019$TemperatureMin     =as.numeric(waterQuality_2019$TemperatureMin)
+waterQuality_2019$TemperatureMax     =as.numeric(waterQuality_2019$TemperatureMin)
+waterQuality_2019$DissolvedO2Min     =as.numeric(waterQuality_2019$DissolvedO2Min)
+waterQuality_2019$DissolvedO2Max     =as.numeric(waterQuality_2019$DissolvedO2Max)
+waterQuality_2019$pHMin              =as.numeric(waterQuality_2019$pHMin)
+waterQuality_2019$pHMax              =as.numeric(waterQuality_2019$pHMax)
+waterQuality_2019$ConductivityMin    =as.numeric(waterQuality_2019$ConductivityMin)
+waterQuality_2019$ConductivityMax    =as.numeric(waterQuality_2019$ConductivityMax)
+waterQuality_2019$BODMin             =as.numeric(waterQuality_2019$BODMin)
+waterQuality_2019$BODMax             =as.numeric(waterQuality_2019$BODMax)
+waterQuality_2019$NitrateMin         =as.numeric(waterQuality_2019$NitrateMin)
+waterQuality_2019$NitrateMax         =as.numeric(waterQuality_2019$NitrateMax)
+waterQuality_2019$FecalColiformMin   =as.numeric(waterQuality_2019$FecalColiformMin)
+waterQuality_2019$FecalColiformMax   =as.numeric(waterQuality_2019$FecalColiformMax)
+waterQuality_2019$TotalColiformMin   =as.numeric(waterQuality_2019$TotalColiformMin)
+waterQuality_2019$TotalColiformMax   =as.numeric(waterQuality_2019$TotalColiformMax)
+waterQuality_2019$NO2                =as.numeric(waterQuality_2019$NO2)
+waterQuality_2019$PM10               =as.numeric(waterQuality_2019$PM10)
+
+cols=c("TemperatureMin"   
+,"TemperatureMax"  
+,"DissolvedO2Min"   
+,"DissolvedO2Max"   
+,"pHMin"            
+,"pHMax"            
+,"ConductivityMin"  
+,"ConductivityMax" 
+,"BODMin"           
+,"BODMax"           
+,"NitrateMin"       
+,"NitrateMax"       
+,"FecalColiformMin" 
+,"FecalColiformMax"
+,"TotalColiformMin" 
+,"TotalColiformMax" 
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")
+
+waterQuality_2019_Avg=waterQuality_2019
+
+
+# Calculate the average values for each variable
+waterQuality_2019_Avg$TemperatureAvg = (waterQuality_2019_Avg$TemperatureMin + waterQuality_2019_Avg$TemperatureMax) / 2
+waterQuality_2019_Avg$DissolvedO2Avg = (waterQuality_2019_Avg$DissolvedO2Min + waterQuality_2019_Avg$DissolvedO2Max) / 2
+waterQuality_2019_Avg$pHAvg = (waterQuality_2019_Avg$pHMin + waterQuality_2019_Avg$pHMax) / 2
+waterQuality_2019_Avg$ConductivityAvg = (waterQuality_2019_Avg$ConductivityMin + waterQuality_2019_Avg$ConductivityMax) / 2
+waterQuality_2019_Avg$FecalColiformAvg = (waterQuality_2019_Avg$FecalColiformMin + waterQuality_2019_Avg$FecalColiformMax) / 2
+waterQuality_2019_Avg$BODAvg = (waterQuality_2019_Avg$BODMin + waterQuality_2019_Avg$BODMax) / 2
+waterQuality_2019_Avg$NitrateAvg = (waterQuality_2019_Avg$NitrateMin + waterQuality_2019_Avg$NitrateMax) / 2
+
+waterQuality_2019_Avg$TotalColiformAvg = (waterQuality_2019_Avg$TotalColiformMin + waterQuality_2019_Avg$TotalColiformMax) / 2
+
+waterQuality_2019_Avg = subset(waterQuality_2019_Avg,select=-c(TemperatureMin   
+,TemperatureMax  
+,DissolvedO2Min   
+,DissolvedO2Max   
+,pHMin            
+,pHMax            
+,ConductivityMin  
+,ConductivityMax 
+,BODMin           
+,BODMax           
+,NitrateMin       
+,NitrateMax       
+,FecalColiformMin 
+,FecalColiformMax
+,TotalColiformMin 
+,TotalColiformMax))
+
+numCols=c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"  
+,"FecalColiformAvg"
+,"NitrateAvg"   
+,"TotalColiformAvg"
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")
+
+for (col in colnames(waterQuality_2019_Avg)) {
+  # Check if column has any NAs
+  if (sum(is.na(waterQuality_2019_Avg[, col])) > 0) {
+    # Replace NAs with mean value of the column
+    waterQuality_2019_Avg[is.na(waterQuality_2019_Avg[, col]), col] = mean(waterQuality_2019_Avg[, col], na.rm = TRUE)
+  }
+}
+
+
+for (col in numCols) {
+  # Create the histogram plot
+  hist(waterQuality_2019_Avg[[col]], main = col, xlab = col)
+} 
+
+
+cov_mat = cov(waterQuality_2019_Avg[, numCols])
+
+corr_matrix = cor(waterQuality_2019_Avg[, numCols])
+
+library(corrplot)
+
+corrplot(corr_matrix)
+
+
+waterQuality_2019_Avg = aggregate(cbind(TemperatureAvg,   
+                          DissolvedO2Avg,   
+                          pHAvg,            
+                          ConductivityAvg,  
+                          BODAvg,           
+                          NitrateAvg, 
+                          TotalColiformAvg,
+                          FecalColiformAvg,
+                          NO2,              
+                          PM10,             
+                          SO2,              
+                          PM2.5) ~ State, 
+                    data = waterQuality_2019_Avg, 
+                    mean)
+
+pca_data = waterQuality_2019_Avg[, c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"           
+,"NitrateAvg" 
+,"FecalColiformAvg"
+,"TotalColiformAvg"
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")]
+
+# Center and scale the data
+pca_data_scaled = scale(pca_data)
+
+# Perform PCA
+pca_result = princomp(pca_data_scaled, center = TRUE, scale. = TRUE)
+
+# Print the summary of PCA results
+summary(pca_result)
+
+#reverse the signs
+pca_result$rotation = -1*pca_result$rotation
+
+#display principal components
+pca_result$rotation
+
+var_explained = pca_result$sdev^2 / sum(pca_result$sdev^2)
+
+print(var_explained)
+
+pc.comp = pca_result$scores
+
+#88%
+pc.comp1 = -1*pc.comp[,1]
+pc.comp2 = -1*pc.comp[,2]
+pc.comp3 = -1*pc.comp[,3]
+pc.comp4 = -1*pc.comp[,4]
+pc.comp5 = -1*pc.comp[,5]
+pc.comp6 = -1*pc.comp[,6]
+
+library(factoextra)
+library(tidyr)
+library(ggplot2)
+
+X = cbind(pc.comp1, pc.comp2,pc.comp3, pc.comp4,pc.comp5,pc.comp6)
+
+X
+
+k =6
+kmeans_model = kmeans(X, centers = k,nstart=1)
+
+
+waterQuality_2019_Avg$cluster=kmeans_model$cluster
+
+
+fviz_cluster(kmeans_model, data = X)
+
+mean_by_group = aggregate(cbind(TemperatureAvg, DissolvedO2Avg, pHAvg,ConductivityAvg,BODAvg,NitrateAvg,FecalColiformAvg,TotalColiformAvg,NO2,PM10,SO2,PM2.5) ~ cluster, data = waterQuality_2019_Avg, mean)
+
+table(waterQuality_2019_Avg$State,waterQuality_2019_Avg$cluster)
+
+
+waterQuality_2019_Avg
+
+Result_2019= mean_by_group[order(mean_by_group$TotalColiformAvg, mean_by_group$BODAvg, mean_by_group$DissolvedO2Avg,mean_by_group$NO2,mean_by_group$FecalColiformAvg,mean_by_group$PM10,mean_by_group$SO2,mean_by_group$PM2.5), ]
+
+
+Result_2019$Rank=c("A", "B", "C", "D", "E","F")
+
+class(Result_2019$cluster)
+class(waterQuality_2019_Avg$cluster)
+
+
+WaterAir2019 = merge(waterQuality_2019_Avg, Result_2019[,c("cluster","Rank")], by = "cluster", all.x = TRUE)
+
+WaterQualityAlone = waterQuality_2019_Avg[, c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"
+,"FecalColiformAvg"
+,"NitrateAvg"      
+,"TotalColiformAvg"
+)]
+
+# Center and scale the data
+WaterQualityAlone_scaled = scale(WaterQualityAlone)
+
+# Perform PCA
+pca_result = princomp(WaterQualityAlone_scaled, center = TRUE, scale. = TRUE)
+
+# Print the summary of PCA results
+summary(pca_result)
+
+#reverse the signs
+pca_result$rotation = -1*pca_result$rotation
+
+#display principal components
+pca_result$rotation
+
+var_explained = pca_result$sdev^2 / sum(pca_result$sdev^2)
+
+print(var_explained)
+
+pc.comp = pca_result$scores
+
+#86%
+pc.comp1 = -1*pc.comp[,1]
+pc.comp2 = -1*pc.comp[,2]
+pc.comp3 = -1*pc.comp[,3]
+pc.comp4 = -1*pc.comp[,4]
+pc.comp5= -1*pc.comp[,5]
+pc.comp6 = -1*pc.comp[,6]
+
+library(factoextra)
+library(tidyr)
+library(ggplot2)
+
+X = cbind(pc.comp1, pc.comp2,pc.comp3, pc.comp4,pc.comp5,pc.comp6)
+
+X
+
+k =6
+kmeans_model = kmeans(X, centers = k,nstart=1)
+
+
+waterQuality_2019_Avg$cluster=kmeans_model$cluster
+
+
+fviz_cluster(kmeans_model, data = X)
+
+mean_by_group = aggregate(cbind(TemperatureAvg, DissolvedO2Avg, pHAvg,ConductivityAvg,BODAvg,NitrateAvg,FecalColiformAvg,TotalColiformAvg) ~ cluster, data = waterQuality_2019_Avg, mean)
+
+table(waterQuality_2019_Avg$State,waterQuality_2019_Avg$cluster)
+
+
+WaterQualityAlone
+
+Result_2019_water= mean_by_group[order(mean_by_group$TotalColiformAvg, mean_by_group$BODAvg, mean_by_group$DissolvedO2Avg,mean_by_group$FecalColiformAvg), ]
+
+
+Result_2019_water$Rank=c("A", "B", "C", "D", "E","F")
+
+class(waterQuality_2019_Avg$cluster)
+class(waterQuality_2019_Avg$cluster)
+
+
+Water2019 = merge(waterQuality_2019_Avg, Result_2019_water[,c("cluster","Rank")], by = "cluster", all.x = TRUE)
+
+```
+
+
+```{r}
+
+
+waterQuality_2020=finalDataset[finalDataset$year == 2020,]
+waterQuality_2020$TemperatureMin     =as.numeric(waterQuality_2020$TemperatureMin)
+waterQuality_2020$TemperatureMax     =as.numeric(waterQuality_2020$TemperatureMin)
+waterQuality_2020$DissolvedO2Min     =as.numeric(waterQuality_2020$DissolvedO2Min)
+waterQuality_2020$DissolvedO2Max     =as.numeric(waterQuality_2020$DissolvedO2Max)
+waterQuality_2020$pHMin              =as.numeric(waterQuality_2020$pHMin)
+waterQuality_2020$pHMax              =as.numeric(waterQuality_2020$pHMax)
+waterQuality_2020$ConductivityMin    =as.numeric(waterQuality_2020$ConductivityMin)
+waterQuality_2020$ConductivityMax    =as.numeric(waterQuality_2020$ConductivityMax)
+waterQuality_2020$BODMin             =as.numeric(waterQuality_2020$BODMin)
+waterQuality_2020$BODMax             =as.numeric(waterQuality_2020$BODMax)
+waterQuality_2020$NitrateMin         =as.numeric(waterQuality_2020$NitrateMin)
+waterQuality_2020$NitrateMax         =as.numeric(waterQuality_2020$NitrateMax)
+waterQuality_2020$FecalColiformMin   =as.numeric(waterQuality_2020$FecalColiformMin)
+waterQuality_2020$FecalColiformMax   =as.numeric(waterQuality_2020$FecalColiformMax)
+waterQuality_2020$TotalColiformMin   =as.numeric(waterQuality_2020$TotalColiformMin)
+waterQuality_2020$TotalColiformMax   =as.numeric(waterQuality_2020$TotalColiformMax)
+waterQuality_2020$NO2                =as.numeric(waterQuality_2020$NO2)
+waterQuality_2020$PM10               =as.numeric(waterQuality_2020$PM10)
+
+cols=c("TemperatureMin"   
+,"TemperatureMax"  
+,"DissolvedO2Min"   
+,"DissolvedO2Max"   
+,"pHMin"            
+,"pHMax"            
+,"ConductivityMin"  
+,"ConductivityMax" 
+,"BODMin"           
+,"BODMax"           
+,"NitrateMin"       
+,"NitrateMax"       
+,"FecalColiformMin" 
+,"FecalColiformMax"
+,"TotalColiformMin" 
+,"TotalColiformMax" 
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")
+
+waterQuality_2020_Avg=waterQuality_2020
+
+
+# Calculate the average values for each variable
+waterQuality_2020_Avg$TemperatureAvg = (waterQuality_2020_Avg$TemperatureMin + waterQuality_2020_Avg$TemperatureMax) / 2
+waterQuality_2020_Avg$DissolvedO2Avg = (waterQuality_2020_Avg$DissolvedO2Min + waterQuality_2020_Avg$DissolvedO2Max) / 2
+waterQuality_2020_Avg$pHAvg = (waterQuality_2020_Avg$pHMin + waterQuality_2020_Avg$pHMax) / 2
+waterQuality_2020_Avg$ConductivityAvg = (waterQuality_2020_Avg$ConductivityMin + waterQuality_2020_Avg$ConductivityMax) / 2
+waterQuality_2020_Avg$FecalColiformAvg = (waterQuality_2020_Avg$FecalColiformMin + waterQuality_2020_Avg$FecalColiformMax) / 2
+waterQuality_2020_Avg$BODAvg = (waterQuality_2020_Avg$BODMin + waterQuality_2020_Avg$BODMax) / 2
+waterQuality_2020_Avg$NitrateAvg = (waterQuality_2020_Avg$NitrateMin + waterQuality_2020_Avg$NitrateMax) / 2
+
+waterQuality_2020_Avg$TotalColiformAvg = (waterQuality_2020_Avg$TotalColiformMin + waterQuality_2020_Avg$TotalColiformMax) / 2
+
+waterQuality_2020_Avg = subset(waterQuality_2020_Avg,select=-c(TemperatureMin   
+,TemperatureMax  
+,DissolvedO2Min   
+,DissolvedO2Max   
+,pHMin            
+,pHMax            
+,ConductivityMin  
+,ConductivityMax 
+,BODMin           
+,BODMax           
+,NitrateMin       
+,NitrateMax       
+,FecalColiformMin 
+,FecalColiformMax
+,TotalColiformMin 
+,TotalColiformMax))
+
+numCols=c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg" 
+,"FecalColiformAvg"
+,"NitrateAvg"   
+,"TotalColiformAvg"
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")
+
+for (col in colnames(waterQuality_2020_Avg)) {
+  # Check if column has any NAs
+  if (sum(is.na(waterQuality_2020_Avg[, col])) > 0) {
+    # Replace NAs with mean value of the column
+    waterQuality_2020_Avg[is.na(waterQuality_2020_Avg[, col]), col] = mean(waterQuality_2020_Avg[, col], na.rm = TRUE)
+  }
+}
+
+
+for (col in numCols) {
+  # Create the histogram plot
+  hist(waterQuality_2020_Avg[[col]], main = col, xlab = col)
+} 
+
+
+cov_mat = cov(waterQuality_2020_Avg[, numCols])
+
+corr_matrix = cor(waterQuality_2020_Avg[, numCols])
+
+library(corrplot)
+
+corrplot(corr_matrix)
+
+
+waterQuality_2020_Avg = aggregate(cbind(TemperatureAvg,   
+                          DissolvedO2Avg,   
+                          pHAvg,            
+                          ConductivityAvg,  
+                          BODAvg,           
+                          NitrateAvg, 
+                          TotalColiformAvg,
+                          FecalColiformAvg,
+                          NO2,              
+                          PM10,             
+                          SO2,              
+                          PM2.5) ~ State, 
+                    data = waterQuality_2020_Avg, 
+                    mean)
+
+pca_data = waterQuality_2020_Avg[, c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"           
+,"NitrateAvg"   
+,"FecalColiformAvg"
+,"TotalColiformAvg"
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")]
+
+# Center and scale the data
+pca_data_scaled = scale(pca_data)
+
+# Perform PCA
+pca_result = princomp(pca_data_scaled, center = TRUE, scale. = TRUE)
+
+# Print the summary of PCA results
+summary(pca_result)
+
+#reverse the signs
+pca_result$rotation = -1*pca_result$rotation
+
+#display principal components
+pca_result$rotation
+
+var_explained = pca_result$sdev^2 / sum(pca_result$sdev^2)
+
+print(var_explained)
+
+pc.comp = pca_result$scores
+
+#85%
+pc.comp1 = -1*pc.comp[,1]
+pc.comp2 = -1*pc.comp[,2]
+pc.comp3 = -1*pc.comp[,3]
+pc.comp4 = -1*pc.comp[,4]
+pc.comp5 = -1*pc.comp[,5]
+
+library(factoextra)
+library(tidyr)
+library(ggplot2)
+
+X = cbind(pc.comp1, pc.comp2,pc.comp3, pc.comp4,pc.comp5)
+
+X
+
+k =6
+kmeans_model = kmeans(X, centers = k,nstart=1)
+
+
+waterQuality_2020_Avg$cluster=kmeans_model$cluster
+
+
+fviz_cluster(kmeans_model, data = X)
+
+mean_by_group = aggregate(cbind(TemperatureAvg, DissolvedO2Avg, pHAvg,ConductivityAvg,BODAvg,NitrateAvg,FecalColiformAvg,TotalColiformAvg,NO2,PM10,SO2,PM2.5) ~ cluster, data = waterQuality_2020_Avg, mean)
+
+table(waterQuality_2020_Avg$State,waterQuality_2020_Avg$cluster)
+
+
+waterQuality_2020_Avg
+
+Result_2020= mean_by_group[order(mean_by_group$TotalColiformAvg, mean_by_group$BODAvg, mean_by_group$DissolvedO2Avg,mean_by_group$NO2,mean_by_group$FecalColiformAvg,mean_by_group$PM10,mean_by_group$SO2,mean_by_group$PM2.5), ]
+
+
+Result_2020$Rank=c("A", "B", "C", "D", "E","F")
+
+class(Result_2020$cluster)
+class(waterQuality_2020_Avg$cluster)
+
+
+WaterAir2020 = merge(waterQuality_2020_Avg, Result_2020[,c("cluster","Rank")], by = "cluster", all.x = TRUE)
+
+WaterQualityAlone = waterQuality_2020_Avg[, c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"
+,"FecalColiformAvg"
+,"NitrateAvg"      
+,"TotalColiformAvg"
+)]
+
+# Center and scale the data
+WaterQualityAlone_scaled = scale(WaterQualityAlone)
+
+# Perform PCA
+pca_result = princomp(WaterQualityAlone_scaled, center = TRUE, scale. = TRUE)
+
+# Print the summary of PCA results
+summary(pca_result)
+
+#reverse the signs
+pca_result$rotation = -1*pca_result$rotation
+
+#display principal components
+pca_result$rotation
+
+var_explained = pca_result$sdev^2 / sum(pca_result$sdev^2)
+
+print(var_explained)
+
+pc.comp = pca_result$scores
+
+#86%
+pc.comp1 = -1*pc.comp[,1]
+pc.comp2 = -1*pc.comp[,2]
+pc.comp3 = -1*pc.comp[,3]
+pc.comp4 = -1*pc.comp[,4]
+
+
+library(factoextra)
+library(tidyr)
+library(ggplot2)
+
+X = cbind(pc.comp1, pc.comp2,pc.comp3, pc.comp4)
+
+X
+
+k =6
+kmeans_model = kmeans(X, centers = k,nstart=1)
+
+
+waterQuality_2020_Avg$cluster=kmeans_model$cluster
+
+
+fviz_cluster(kmeans_model, data = X)
+
+mean_by_group = aggregate(cbind(TemperatureAvg, DissolvedO2Avg, pHAvg,ConductivityAvg,BODAvg,NitrateAvg,FecalColiformAvg,TotalColiformAvg) ~ cluster, data = waterQuality_2020_Avg, mean)
+
+table(waterQuality_2020_Avg$State,waterQuality_2020_Avg$cluster)
+
+
+WaterQualityAlone
+
+Result_2020_water= mean_by_group[order(mean_by_group$TotalColiformAvg, mean_by_group$BODAvg, mean_by_group$DissolvedO2Avg,mean_by_group$FecalColiformAvg), ]
+
+
+Result_2020_water$Rank=c("A", "B", "C", "D", "E","F")
+
+class(waterQuality_2020_Avg$cluster)
+class(waterQuality_2020_Avg$cluster)
+
+
+Water2020 = merge(waterQuality_2020_Avg, Result_2020_water[,c("cluster","Rank")], by = "cluster", all.x = TRUE)
+
+```
+
+```{r}
+
+waterQuality_2021=finalDataset[finalDataset$year == 2021,]
+waterQuality_2021$TemperatureMin     =as.numeric(waterQuality_2021$TemperatureMin)
+waterQuality_2021$TemperatureMax     =as.numeric(waterQuality_2021$TemperatureMin)
+waterQuality_2021$DissolvedO2Min     =as.numeric(waterQuality_2021$DissolvedO2Min)
+waterQuality_2021$DissolvedO2Max     =as.numeric(waterQuality_2021$DissolvedO2Max)
+waterQuality_2021$pHMin              =as.numeric(waterQuality_2021$pHMin)
+waterQuality_2021$pHMax              =as.numeric(waterQuality_2021$pHMax)
+waterQuality_2021$ConductivityMin    =as.numeric(waterQuality_2021$ConductivityMin)
+waterQuality_2021$ConductivityMax    =as.numeric(waterQuality_2021$ConductivityMax)
+waterQuality_2021$BODMin             =as.numeric(waterQuality_2021$BODMin)
+waterQuality_2021$BODMax             =as.numeric(waterQuality_2021$BODMax)
+waterQuality_2021$NitrateMin         =as.numeric(waterQuality_2021$NitrateMin)
+waterQuality_2021$NitrateMax         =as.numeric(waterQuality_2021$NitrateMax)
+waterQuality_2021$FecalColiformMin   =as.numeric(waterQuality_2021$FecalColiformMin)
+waterQuality_2021$FecalColiformMax   =as.numeric(waterQuality_2021$FecalColiformMax)
+waterQuality_2021$TotalColiformMin   =as.numeric(waterQuality_2021$TotalColiformMin)
+waterQuality_2021$TotalColiformMax   =as.numeric(waterQuality_2021$TotalColiformMax)
+waterQuality_2021$NO2                =as.numeric(waterQuality_2021$NO2)
+waterQuality_2021$PM10               =as.numeric(waterQuality_2021$PM10)
+
+cols=c("TemperatureMin"   
+,"TemperatureMax"  
+,"DissolvedO2Min"   
+,"DissolvedO2Max"   
+,"pHMin"            
+,"pHMax"            
+,"ConductivityMin"  
+,"ConductivityMax" 
+,"BODMin"           
+,"BODMax"           
+,"NitrateMin"       
+,"NitrateMax"       
+,"FecalColiformMin" 
+,"FecalColiformMax"
+,"TotalColiformMin" 
+,"TotalColiformMax" 
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")
+
+waterQuality_2021_Avg=waterQuality_2021
+
+
+# Calculate the average values for each variable
+waterQuality_2021_Avg$TemperatureAvg = (waterQuality_2021_Avg$TemperatureMin + waterQuality_2021_Avg$TemperatureMax) / 2
+waterQuality_2021_Avg$DissolvedO2Avg = (waterQuality_2021_Avg$DissolvedO2Min + waterQuality_2021_Avg$DissolvedO2Max) / 2
+waterQuality_2021_Avg$pHAvg = (waterQuality_2021_Avg$pHMin + waterQuality_2021_Avg$pHMax) / 2
+waterQuality_2021_Avg$ConductivityAvg = (waterQuality_2021_Avg$ConductivityMin + waterQuality_2021_Avg$ConductivityMax) / 2
+waterQuality_2021_Avg$FecalColiformAvg = (waterQuality_2021_Avg$FecalColiformMin + waterQuality_2021_Avg$FecalColiformMax) / 2
+waterQuality_2021_Avg$BODAvg = (waterQuality_2021_Avg$BODMin + waterQuality_2021_Avg$BODMax) / 2
+waterQuality_2021_Avg$NitrateAvg = (waterQuality_2021_Avg$NitrateMin + waterQuality_2021_Avg$NitrateMax) / 2
+
+waterQuality_2021_Avg$TotalColiformAvg = (waterQuality_2021_Avg$TotalColiformMin + waterQuality_2021_Avg$TotalColiformMax) / 2
+
+waterQuality_2021_Avg = subset(waterQuality_2021_Avg,select=-c(TemperatureMin   
+,TemperatureMax  
+,DissolvedO2Min   
+,DissolvedO2Max   
+,pHMin            
+,pHMax            
+,ConductivityMin  
+,ConductivityMax 
+,BODMin           
+,BODMax           
+,NitrateMin       
+,NitrateMax       
+,FecalColiformMin 
+,FecalColiformMax
+,TotalColiformMin 
+,TotalColiformMax))
+
+numCols=c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"           
+,"NitrateAvg"   
+,"TotalColiformAvg"
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")
+
+for (col in colnames(waterQuality_2021_Avg)) {
+  # Check if column has any NAs
+  if (sum(is.na(waterQuality_2021_Avg[, col])) > 0) {
+    # Replace NAs with mean value of the column
+    waterQuality_2021_Avg[is.na(waterQuality_2021_Avg[, col]), col] = mean(waterQuality_2021_Avg[, col], na.rm = TRUE)
+  }
+}
+
+
+for (col in numCols) {
+  # Create the histogram plot
+  hist(waterQuality_2021_Avg[[col]], main = col, xlab = col)
+} 
+
+
+cov_mat = cov(waterQuality_2021_Avg[, numCols])
+
+corr_matrix = cor(waterQuality_2021_Avg[, numCols])
+
+library(corrplot)
+
+corrplot(corr_matrix)
+
+
+waterQuality_2021_Avg = aggregate(cbind(TemperatureAvg,   
+                          DissolvedO2Avg,   
+                          pHAvg,            
+                          ConductivityAvg,  
+                          BODAvg,           
+                          NitrateAvg, 
+                          TotalColiformAvg,
+                          FecalColiformAvg,
+                          NO2,              
+                          PM10,             
+                          SO2,              
+                          PM2.5) ~ State, 
+                    data = waterQuality_2021_Avg, 
+                    mean)
+
+pca_data = waterQuality_2021_Avg[, c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"           
+,"NitrateAvg"
+,"FecalColiformAvg"
+,"TotalColiformAvg"
+,"NO2"              
+,"PM10"             
+,"SO2"              
+,"PM2.5")]
+
+# Center and scale the data
+pca_data_scaled = scale(pca_data)
+
+# Perform PCA
+pca_result = princomp(pca_data_scaled, center = TRUE, scale. = TRUE)
+
+# Print the summary of PCA results
+summary(pca_result)
+
+#reverse the signs
+pca_result$rotation = -1*pca_result$rotation
+
+#display principal components
+pca_result$rotation
+
+var_explained = pca_result$sdev^2 / sum(pca_result$sdev^2)
+
+print(var_explained)
+
+pc.comp = pca_result$scores
+
+#85%
+pc.comp1 = -1*pc.comp[,1]
+pc.comp2 = -1*pc.comp[,2]
+pc.comp3 = -1*pc.comp[,3]
+pc.comp4 = -1*pc.comp[,4]
+pc.comp5 = -1*pc.comp[,5]
+
+
+library(factoextra)
+library(tidyr)
+library(ggplot2)
+
+X = cbind(pc.comp1, pc.comp2,pc.comp3, pc.comp4,pc.comp5)
+
+X
+
+k =6
+kmeans_model = kmeans(X, centers = k,nstart=1)
+
+
+waterQuality_2021_Avg$cluster=kmeans_model$cluster
+
+
+fviz_cluster(kmeans_model, data = X)
+
+mean_by_group = aggregate(cbind(TemperatureAvg, DissolvedO2Avg, pHAvg,ConductivityAvg,BODAvg,NitrateAvg,FecalColiformAvg,TotalColiformAvg,NO2,PM10,SO2,PM2.5) ~ cluster, data = waterQuality_2021_Avg, mean)
+
+table(waterQuality_2021_Avg$State,waterQuality_2021_Avg$cluster)
+
+
+waterQuality_2021_Avg
+
+Result_2021= mean_by_group[order(mean_by_group$TotalColiformAvg, mean_by_group$BODAvg, mean_by_group$DissolvedO2Avg,mean_by_group$NO2,mean_by_group$FecalColiformAvg,mean_by_group$PM10,mean_by_group$SO2,mean_by_group$PM2.5), ]
+
+
+Result_2021$Rank=c("A", "B", "C", "D", "E","F")
+
+class(Result_2021$cluster)
+class(waterQuality_2021_Avg$cluster)
+
+
+WaterAir2021 = merge(waterQuality_2021_Avg, Result_2021[,c("cluster","Rank")], by = "cluster", all.x = TRUE)
+
+WaterQualityAlone = waterQuality_2021_Avg[, c("TemperatureAvg"   
+,"DissolvedO2Avg"   
+,"pHAvg"            
+,"ConductivityAvg"  
+,"BODAvg"
+,"FecalColiformAvg"
+,"NitrateAvg"      
+,"TotalColiformAvg"
+)]
+
+# Center and scale the data
+WaterQualityAlone_scaled = scale(WaterQualityAlone)
+
+# Perform PCA
+pca_result = princomp(WaterQualityAlone_scaled, center = TRUE, scale. = TRUE)
+
+# Print the summary of PCA results
+summary(pca_result)
+
+#reverse the signs
+pca_result$rotation = -1*pca_result$rotation
+
+#display principal components
+pca_result$rotation
+
+var_explained = pca_result$sdev^2 / sum(pca_result$sdev^2)
+
+print(var_explained)
+
+pc.comp = pca_result$scores
+
+#86%
+pc.comp1 = -1*pc.comp[,1]
+pc.comp2 = -1*pc.comp[,2]
+pc.comp3 = -1*pc.comp[,3]
+pc.comp4 = -1*pc.comp[,4]
+
+
+library(factoextra)
+library(tidyr)
+library(ggplot2)
+
+X = cbind(pc.comp1, pc.comp2,pc.comp3, pc.comp4)
+
+X
+
+k =6
+kmeans_model = kmeans(X, centers = k,nstart=1)
+
+
+waterQuality_2021_Avg$cluster=kmeans_model$cluster
+
+
+fviz_cluster(kmeans_model, data = X)
+
+mean_by_group = aggregate(cbind(TemperatureAvg, DissolvedO2Avg, pHAvg,ConductivityAvg,BODAvg,NitrateAvg,FecalColiformAvg,TotalColiformAvg) ~ cluster, data = waterQuality_2021_Avg, mean)
+
+table(waterQuality_2021_Avg$State,waterQuality_2021_Avg$cluster)
+
+
+WaterQualityAlone
+
+Result_2021_water= mean_by_group[order(mean_by_group$TotalColiformAvg, mean_by_group$BODAvg, mean_by_group$DissolvedO2Avg,mean_by_group$FecalColiformAvg), ]
+
+
+Result_2021_water$Rank=c("A", "B", "C", "D", "E","F")
+
+class(waterQuality_2021_Avg$cluster)
+class(waterQuality_2021_Avg$cluster)
+
+
+Water2021 = merge(waterQuality_2021_Avg, Result_2021_water[,c("cluster","Rank")], by = "cluster", all.x = TRUE)
+
+
+
+```
+
+
+```{r}
+library(stringr)
+library(ggplot2)
+library(sf)
+
+plotD = WaterAir2017
+
+# create a list of selected states with ranks
+plotD$State[plotD$State == "DAMAN AND DIU, DADRA AND NAGAR HAVELI"] = "DAMAN AND DIU"
+
+selected_states = str_to_title(plotD$State)
+
+ranks = plotD$Rank
+state_ranks = data.frame(state = selected_states, rank = ranks)
+
+# read in the shapefile data for Indian states
+india = st_read("C:/Users/SRINU/Desktop/DPA Project/IND_adm1.shp")
+
+# join the state rank data with the shapefile data
+india_ranks = merge(india, state_ranks, by.x = "NAME_1", by.y = "state")
+
+# manually specify the colors for each rank
+colors = c("#8BC34A", "#FFEB3B", "#9C27B0", "#673AB7","#FF9800", "#F44336")
+names(colors) = c("A", "B", "C", "D", "E", "F")
+
+
+
+states <- india %>%
+  st_centroid() %>%
+  st_coordinates() %>%
+  as.data.frame() %>%
+  mutate(state = india$NAME_1)
+  
+  
+  
+ggplot(data = india_ranks) +
+  geom_sf(aes(fill = factor(rank))) +
+  scale_fill_manual(values = colors) +
+  theme_void() +
+  geom_text(data = states, aes(x = X, y = Y, label = state), size = 2, color = "black",text = element_text(family = "Roboto Condensed", size = 2)) +
+  labs(title = "State-wise Rankings of Water and Air Quality in India 2017")
+
+```
+
+```{r}
+
+library(stringr)
+library(ggplot2)
+library(sf)
+
+ploDWater = WaterAir2017
+
+# create a list of selected states with ranks
+ploDWater$State[ploDWater$State == "DAMAN AND DIU, DADRA AND NAGAR HAVELI"] = "DAMAN AND DIU"
+
+selected_states = str_to_title(ploDWater$State)
+
+ranks = ploDWater$Rank
+state_ranks = data.frame(state = selected_states, rank = ranks)
+
+# read in the shapefile data for Indian states
+india = st_read("C:/Users/SRINU/Desktop/DPA Project/IND_adm1.shp")
+
+# join the state rank data with the shapefile data
+india_ranks = merge(india, state_ranks, by.x = "NAME_1", by.y = "state")
+
+# manually specify the colors for each rank
+colors = c("#8BC34A", "#FFEB3B", "#9C27B0", "#673AB7","#FF9800", "#F44336")
+names(colors) = c("A", "B", "C", "D", "E", "F")
+
+
+states <- india %>%
+  st_centroid() %>%
+  st_coordinates() %>%
+  as.data.frame() %>%
+  mutate(state = india$NAME_1)
+  
+  
+  
+ggplot(data = india_ranks) +
+  geom_sf(aes(fill = factor(rank))) +
+  scale_fill_manual(values = colors) +
+  theme_void() +
+  geom_text(data = states, aes(x = X, y = Y, label = state), size = 2, color = "black",text = element_text(family = "Roboto Condensed", size = 2)) +
+  labs(title = "State-wise Rankings of Water Quality in India 2017")
+
+
+```
+
+```{r}
+library(stringr)
+library(ggplot2)
+library(sf)
+
+plotD = WaterAir2018
+
+# create a list of selected states with ranks
+plotD$State[plotD$State == "DAMAN AND DIU, DADRA AND NAGAR HAVELI"] = "DAMAN AND DIU"
+
+selected_states = str_to_title(plotD$State)
+
+ranks = plotD$Rank
+state_ranks = data.frame(state = selected_states, rank = ranks)
+
+# read in the shapefile data for Indian states
+india = st_read("C:/Users/SRINU/Desktop/DPA Project/IND_adm1.shp")
+
+# join the state rank data with the shapefile data
+india_ranks = merge(india, state_ranks, by.x = "NAME_1", by.y = "state")
+
+# manually specify the colors for each rank
+colors = c("#8BC34A", "#FFEB3B", "#9C27B0", "#673AB7","#FF9800", "#F44336")
+names(colors) = c("A", "B", "C", "D", "E", "F")
+
+
+states <- india %>%
+  st_centroid() %>%
+  st_coordinates() %>%
+  as.data.frame() %>%
+  mutate(state = india$NAME_1)
+  
+  
+  
+ggplot(data = india_ranks) +
+  geom_sf(aes(fill = factor(rank))) +
+  scale_fill_manual(values = colors) +
+  theme_void() +
+  geom_text(data = states, aes(x = X, y = Y, label = state), size = 2, color = "black",text = element_text(family = "Roboto Condensed", size = 2)) +
+  labs(title = "State-wise Rankings of Water and Air Quality in India 2018")
+
+```
+
+
+```{r}
+library(stringr)
+library(ggplot2)
+library(sf)
+
+ploDWater = Water2018
+
+# create a list of selected states with ranks
+ploDWater$State[ploDWater$State == "DAMAN AND DIU, DADRA AND NAGAR HAVELI"] = "DAMAN AND DIU"
+
+selected_states = str_to_title(ploDWater$State)
+
+ranks = ploDWater$Rank
+state_ranks = data.frame(state = selected_states, rank = ranks)
+
+# read in the shapefile data for Indian states
+india = st_read("C:/Users/SRINU/Desktop/DPA Project/IND_adm1.shp")
+
+# join the state rank data with the shapefile data
+india_ranks = merge(india, state_ranks, by.x = "NAME_1", by.y = "state")
+
+# manually specify the colors for each rank
+colors = c("#8BC34A", "#FFEB3B", "#9C27B0", "#673AB7","#FF9800", "#F44336")
+names(colors) = c("A", "B", "C", "D", "E", "F")
+
+
+
+states <- india %>%
+  st_centroid() %>%
+  st_coordinates() %>%
+  as.data.frame() %>%
+  mutate(state = india$NAME_1)
+  
+  
+  
+ggplot(data = india_ranks) +
+  geom_sf(aes(fill = factor(rank))) +
+  scale_fill_manual(values = colors) +
+  theme_void() +
+  geom_text(data = states, aes(x = X, y = Y, label = state), size = 2, color = "black",text = element_text(family = "Roboto Condensed", size = 2)) +
+  labs(title = "State-wise Rankings of Water Quality in India 2018")
+
+```
+
+
+```{r}
+
+library(stringr)
+library(ggplot2)
+library(sf)
+
+plotD = WaterAir2019
+
+# create a list of selected states with ranks
+plotD$State[plotD$State == "DAMAN AND DIU, DADRA AND NAGAR HAVELI"] = "DAMAN AND DIU"
+
+selected_states = str_to_title(plotD$State)
+
+ranks = plotD$Rank
+state_ranks = data.frame(state = selected_states, rank = ranks)
+
+# read in the shapefile data for Indian states
+india = st_read("C:/Users/SRINU/Desktop/DPA Project/IND_adm1.shp")
+
+# join the state rank data with the shapefile data
+india_ranks = merge(india, state_ranks, by.x = "NAME_1", by.y = "state")
+
+# manually specify the colors for each rank
+colors = c("#8BC34A", "#FFEB3B", "#9C27B0", "#673AB7","#FF9800", "#F44336")
+names(colors) = c("A", "B", "C", "D", "E", "F")
+
+
+states <- india %>%
+  st_centroid() %>%
+  st_coordinates() %>%
+  as.data.frame() %>%
+  mutate(state = india$NAME_1)
+  
+  
+  
+ggplot(data = india_ranks) +
+  geom_sf(aes(fill = factor(rank))) +
+  scale_fill_manual(values = colors) +
+  theme_void() +
+  geom_text(data = states, aes(x = X, y = Y, label = state), size = 2, color = "black",text = element_text(family = "Roboto Condensed", size = 2)) +
+  labs(title = "State-wise Rankings of Water and Air Quality in India 2019")
+
+
+```
+
+```{r}
+library(stringr)
+library(ggplot2)
+library(sf)
+
+ploDWater = Water2019
+
+# create a list of selected states with ranks
+ploDWater$State[ploDWater$State == "DAMAN AND DIU, DADRA AND NAGAR HAVELI"] = "DAMAN AND DIU"
+
+selected_states = str_to_title(ploDWater$State)
+
+ranks = ploDWater$Rank
+state_ranks = data.frame(state = selected_states, rank = ranks)
+
+# read in the shapefile data for Indian states
+india = st_read("C:/Users/SRINU/Desktop/DPA Project/IND_adm1.shp")
+
+# join the state rank data with the shapefile data
+india_ranks = merge(india, state_ranks, by.x = "NAME_1", by.y = "state")
+
+# manually specify the colors for each rank
+colors = c("#8BC34A", "#FFEB3B", "#9C27B0", "#673AB7","#FF9800", "#F44336")
+names(colors) = c("A", "B", "C", "D", "E", "F")
+
+
+states <- india %>%
+  st_centroid() %>%
+  st_coordinates() %>%
+  as.data.frame() %>%
+  mutate(state = india$NAME_1)
+  
+  
+  
+ggplot(data = india_ranks) +
+  geom_sf(aes(fill = factor(rank))) +
+  scale_fill_manual(values = colors) +
+  theme_void() +
+  geom_text(data = states, aes(x = X, y = Y, label = state), size = 2, color = "black",text = element_text(family = "Roboto Condensed", size = 2)) +
+  labs(title = "State-wise Rankings of Water Quality in India 2019")
+
+
+```
+
+```{r}
+
+
+library(stringr)
+library(ggplot2)
+library(sf)
+
+plotD = WaterAir2020
+
+# create a list of selected states with ranks
+plotD$State[plotD$State == "DAMAN AND DIU, DADRA AND NAGAR HAVELI"] = "DAMAN AND DIU"
+
+selected_states = str_to_title(plotD$State)
+
+ranks = plotD$Rank
+state_ranks = data.frame(state = selected_states, rank = ranks)
+
+# read in the shapefile data for Indian states
+india = st_read("C:/Users/SRINU/Desktop/DPA Project/IND_adm1.shp")
+
+# join the state rank data with the shapefile data
+india_ranks = merge(india, state_ranks, by.x = "NAME_1", by.y = "state")
+
+# manually specify the colors for each rank
+colors = c("#8BC34A", "#FFEB3B", "#9C27B0", "#673AB7","#FF9800", "#F44336")
+names(colors) = c("A", "B", "C", "D", "E", "F")
+
+
+states <- india %>%
+  st_centroid() %>%
+  st_coordinates() %>%
+  as.data.frame() %>%
+  mutate(state = india$NAME_1)
+  
+  
+  
+ggplot(data = india_ranks) +
+  geom_sf(aes(fill = factor(rank))) +
+  scale_fill_manual(values = colors) +
+  theme_void() +
+  geom_text(data = states, aes(x = X, y = Y, label = state), size = 2, color = "black",text = element_text(family = "Roboto Condensed", size = 2)) +
+  labs(title = "State-wise Rankings of Water and Air Quality in India 2020")
+
+
+```
+
+```{r}
+
+library(stringr)
+library(ggplot2)
+library(sf)
+
+ploDWater = Water2020
+
+# create a list of selected states with ranks
+ploDWater$State[ploDWater$State == "DAMAN AND DIU, DADRA AND NAGAR HAVELI"] = "DAMAN AND DIU"
+
+selected_states = str_to_title(ploDWater$State)
+
+ranks = ploDWater$Rank
+state_ranks = data.frame(state = selected_states, rank = ranks)
+
+# read in the shapefile data for Indian states
+india = st_read("C:/Users/SRINU/Desktop/DPA Project/IND_adm1.shp")
+
+# join the state rank data with the shapefile data
+india_ranks = merge(india, state_ranks, by.x = "NAME_1", by.y = "state")
+
+# manually specify the colors for each rank
+colors = c("#8BC34A", "#FFEB3B", "#9C27B0", "#673AB7","#FF9800", "#F44336")
+names(colors) = c("A", "B", "C", "D", "E", "F")
+
+
+
+states <- india %>%
+  st_centroid() %>%
+  st_coordinates() %>%
+  as.data.frame() %>%
+  mutate(state = india$NAME_1)
+  
+  
+  
+ggplot(data = india_ranks) +
+  geom_sf(aes(fill = factor(rank))) +
+  scale_fill_manual(values = colors) +
+  theme_void() +
+  geom_text(data = states, aes(x = X, y = Y, label = state), size = 2, color = "black",text = element_text(family = "Roboto Condensed", size = 2)) +
+  labs(title = "State-wise Rankings of Water Quality in India 2020")
+
+
+```
+
+```{r}
+library(stringr)
+library(ggplot2)
+library(sf)
+
+plotD = WaterAir2021
+
+# create a list of selected states with ranks
+plotD$State[plotD$State == "DAMAN AND DIU, DADRA AND NAGAR HAVELI"] = "DAMAN AND DIU"
+
+selected_states = str_to_title(plotD$State)
+
+ranks = plotD$Rank
+state_ranks = data.frame(state = selected_states, rank = ranks)
+
+# read in the shapefile data for Indian states
+india = st_read("C:/Users/SRINU/Desktop/DPA Project/IND_adm1.shp")
+
+# join the state rank data with the shapefile data
+india_ranks = merge(india, state_ranks, by.x = "NAME_1", by.y = "state")
+
+# manually specify the colors for each rank
+colors = c("#8BC34A", "#FFEB3B", "#9C27B0", "#673AB7","#FF9800", "#F44336")
+names(colors) = c("A", "B", "C", "D", "E", "F")
+
+
+states <- india %>%
+  st_centroid() %>%
+  st_coordinates() %>%
+  as.data.frame() %>%
+  mutate(state = india$NAME_1)
+  
+  
+  
+ggplot(data = india_ranks) +
+  geom_sf(aes(fill = factor(rank))) +
+  scale_fill_manual(values = colors) +
+  theme_void() +
+  geom_text(data = states, aes(x = X, y = Y, label = state), size = 2, color = "black",text = element_text(family = "Roboto Condensed", size = 2)) +
+  labs(title = "State-wise Rankings of Water and Air Quality in India 2021")
+
+```
+
+
+```{r}
+library(stringr)
+library(ggplot2)
+library(sf)
+
+ploDWater = Water2021
+
+# create a list of selected states with ranks
+ploDWater$State[ploDWater$State == "DAMAN AND DIU, DADRA AND NAGAR HAVELI"] = "DAMAN AND DIU"
+
+selected_states = str_to_title(ploDWater$State)
+
+ranks = ploDWater$Rank
+state_ranks = data.frame(state = selected_states, rank = ranks)
+
+# read in the shapefile data for Indian states
+india = st_read("C:/Users/SRINU/Desktop/DPA Project/IND_adm1.shp")
+
+# join the state rank data with the shapefile data
+india_ranks = merge(india, state_ranks, by.x = "NAME_1", by.y = "state")
+
+
+
+# manually specify the colors for each rank
+colors = c("#8BC34A", "#FFEB3B", "#9C27B0", "#673AB7","#FF9800", "#F44336")
+names(colors) = c("A", "B", "C", "D", "E", "F")
+
+
+
+states <- india %>%
+  st_centroid() %>%
+  st_coordinates() %>%
+  as.data.frame() %>%
+  mutate(state = india$NAME_1)
+  
+  
+  
+ggplot(data = india_ranks) +
+  geom_sf(aes(fill = factor(rank))) +
+  scale_fill_manual(values = colors) +
+  theme_void() +
+  geom_text(data = states, aes(x = X, y = Y, label = state), size = 2, color = "black",text = element_text(family = "Roboto Condensed", size = 2)) +
+  labs(title = "State-wise Rankings of Water Quality in India 2021")
+
+
+```
+
