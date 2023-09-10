@@ -1,0 +1,512 @@
+---
+title: "Assignment-04"
+author: "Sumanth Donthula"
+date: "2023-04-09"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,warninigs=FALSE)
+```
+
+Recitation Exercises
+
+Chapter-8
+
+Excercise-1:
+
+Handwritten and attached seperately
+
+Exercise-3:
+
+```{r}
+
+p = seq(0, 1, 0.01)
+
+giniIndex = p * (1 - p) +  (1-p)*p
+entropy = -(p * log(p) + (1 - p) * log(1 - p))
+classError = 1 - pmax(p, 1 - p)
+matplot(p, cbind(giniIndex, entropy, classError), type = "l")
+
+```
+Excercise-4:
+
+Handwritten and attached seperately
+
+Exerciise-5:
+
+Majority vote method: Notice that in the above estimates, we have 6 values more than and 4 values less than 0.5, which is utilized as a class boundary.
+
+With this method, we assign X to the class RED.
+
+The average approach: With this method, we take the average of the above estimations. The average is 0.45, which is less than 0.5. As a result, given a certain value of X, the above-mentioned estimations were obtained.
+
+Using the AVERAGE method, we would categorize it as GREEN.
+
+
+Chapter-9
+
+Exercise-1:
+
+a)
+Sketching the hyperplane 1 + 3X1 - X2 = 0. All the brown points fall on 1 + 3X1 - X2>0 region and orange points fall on 
+1 + 3X1 - X2<0 region
+
+```{r}
+
+X1=seq(-2,2,0.1)
+X2= 1+3*X1
+plot(X1,X2,xlab='X1',ylab='X2',type='l',xlim=c(-2,2),ylim=c(-2,2))
+
+for(i in seq(-2,2,length.out = 25)){
+  pts=data.frame(rep(i,25),seq(-2,2,length.out = 25))
+  points(pts,col=ifelse(1+3*pts[,1]-pts[,2]>0,'brown','orange'))
+}
+
+```
+b)
+Plotting -2 + X1 + 2X2 = 0 seperately. All the brown points fall on -2 + X1 + 2X2>0 region and orange points fall on 
+-2 + X1 + 2X2<0 region
+
+
+```{r}
+
+X1=seq(-2,2,0.1)
+X2=1-X1/2
+plot(X1,X2,xlab='X1',ylab='X2',type='l',xlim=c(-2,2),ylim=c(-2,2))
+
+for(i in seq(-2,2,length.out = 25)){
+  pts=data.frame(rep(i,25),seq(-2,2,length.out = 25))
+  points(pts,col=ifelse(-2+pts[,1]+pts[,2]*2>0,'brown','orange'))
+
+}
+
+```
+
+Plotting both on a same plot.
+
+```{r}
+X1=seq(-2,2,0.1)
+X2=1+3*X1
+plot(X1,X2,xlab='X1',ylab='X2',type='l',xlim=c(-2,2),ylim=c(-2,2))
+lines(X1,1-1/2*X1)
+  
+
+for(i in seq(-2,2,length.out = 25)){
+  pts=data.frame(rep(i,25),seq(-2,2,length.out = 25))
+  points(pts,col=ifelse(1+3*pts[,1]-pts[,2]>0,'brown','orange'),
+  pch=ifelse(-2+pts[,1]+pts[,2]*2>0,1,2))
+}
+```
+
+Exercise-2:
+
+(1 + X1)2 + (2 - X2)2 = 4 is an equation of circle. Plotting a,b,c on a same plot.
+
+a)&b)&c)
+
+
+The brown points indicate (1 + X1)^2 + (2 - X2)^2 < 4 region
+
+The orange points indicate (1 + X1)^2 + (2 - X2)^2 > 4 region
+
+
+Note that the point (0, 0) , (2, 2), (3, 8) are outside the circle and are classified as brown 
+The point (-1, 1) lies inside the circle and is classified as orange.
+
+
+```{r}
+
+X1=seq(-3,10,0.01)
+X2=2 - sqrt ( 4-(1+X1)^2)
+X3=2 + sqrt ( 4-(1+X1)^2)
+plot(X1,X2,xlab='X1',ylab='X2',type='l',xlim=c(-3,3),ylim=c(0,4.5))
+lines(X1,X3)
+
+for(i in seq(-4,4.5,length.out = 25)){
+  pts=data.frame(rep(i,25),seq(-4,4.5,length.out = 25))
+  points(pts,col=ifelse((1+pts[,1])^2+(2-pts[,2])^2>4,'brown','orange'))
+}
+
+```
+d)
+
+The decision boundary is a circle in our case
+
+(1 + X1)^2 + (2 - X2)^2 -4 = 0
+which can be simplified as :
+1+ X1^2 + 2X1 + 4 + X2^2 - 4X2 - 4 = 0
+1+ 2X1 - 4X2 + X1^2 + X2^2 = 0
+
+This is of the form a+bf(x1)+cf(x2)+df(x3)+ef(x4) = 0, where 
+
+f(x1)=X1
+f(x2)=X2
+f(x3)=X1^2
+f(x4)=X2^2
+
+
+From the above, we can argue that while the decision boundary in (c) is not linear in terms of X1 and X2, it is linear in terms of X1,X1^2,X2,X2^2.
+
+
+Exercise-3:
+
+a) Plotting Observations
+
+```{r}
+
+x1 = c(3, 2, 4, 1, 2, 4, 4)
+x2 = c(4, 2, 4, 4, 1, 3, 1)
+
+plot(x1, x2, col = c("red", "red", "red", "red", "blue", "blue", "blue"))
+
+```
+b)Finding Optimal hyper plane:
+
+From the above plot we can see that the optimal hyperplane should pass through the midpoint of (2,1)and (2,2) and midpoint of (4,3) and (4,4), so the plain passes thro(2,1.5) and (4,3.5)
+
+then the line will be in the form of, X2 - X1 + 0.5 = 0
+
+
+```{r}
+plot(x1, x2, col = c("red", "red", "red", "red", "blue", "blue", "blue"))
+abline(-0.5, 1)
+
+```
+
+c)Maximum margin Classifier
+
+we know that line equation is X2-X1+0.5=0, it will classify the data point as red if X2-X1+0.5>0 and blue otherwise.
+
+(Beta0,Beta1,Beta2)=(1,-1,0.5)
+
+d) Margin for Maximum Margin Hyperplane:
+
+```{r}
+plot(x1, x2, col = c("red", "red", "red", "red", "blue", "blue", "blue"))
+abline(-0.5, 1)
+abline(-1, 1, lty = 6)
+abline(0, 1, lty = 6)
+
+```
+
+e) Support vectors from the above plot are points (2,1),(2,2),(4,3) and (4,4).
+
+f) 7 point (4,1) is not a support vector and it did not present on the margin, even if we change it it won't effect the hyperplane.
+
+g) Other hyper plane
+The equation x2-x1+0.4=0 is also a hyper plane which cuts resd and blue region but it's not the optimal one.
+
+```{r}
+plot(x1, x2, col = c("red", "red", "red", "red", "blue", "blue", "blue"))
+abline(-0.4, 1)
+
+```
+h) adding an additional observation
+
+The additional poin made hyperplane,no loner seperable
+
+```{r}
+plot(x1, x2, col = c("red", "red", "red", "red", "blue", "blue", "blue"))
+points(c(2.5), c(1), col = c("red"))
+
+```
+
+Practicum Problems:
+
+Problem-1:
+
+```{r}
+library(caret)
+library(tree)
+library(rpart)
+library(rpart.plot)
+
+
+giniScore = function(p)
+{
+giniValue = 2 * p * (1 - p)
+return (giniValue)
+}
+
+entropyValue = function(p)
+{
+entropyVal = (p * log(p) + (1 - p) * log(1 - p))
+return (entropyVal)
+}
+
+```
+
+
+Given normal distribution parameters of (5,2) and (-5,2) for pair of samples considered
+
+```{r}
+set.seed(200)
+
+f1=rnorm(n=200,mean=5,sd=2)
+f2=rnorm(n=200,mean=-5,sd=2)
+
+dataFrame1 = data.frame(val = f1,label=rep("y",200))
+dataFrame2 = data.frame(val = f2,label=rep("n",200))
+dataFrame = rbind(dataFrame1,dataFrame2)
+
+dataFrame$label = as.factor(dataFrame$label)
+decisionTree1 = rpart(label~val,dataFrame,method="class")
+rpart.plot(decisionTree1)
+
+```
+
+
+From above we can see that the threshold value for first split will be 0.4. It has one root and two leaf nodes. The tree is able to classify both classes and shows empirical distribution.
+
+Calculating Gini Score and Entropy for every Node:
+p=probability of correct class at each node
+
+The gini values for nodes of tree are 0.49, 0.0, 0.0197. The entropy values for above tree will be -0.683, NaN, -0.056
+
+```{r}
+p=c(0.4, 0, 0.99)
+giniValues=sapply(p, giniScore)
+giniValues
+
+entropyValues=sapply(p, entropyValue)
+entropyValues
+```
+The tree shows that the threshold value for the first split is 0.36. The tree comprises a total of 13 nodes, one of which is the root node, and 7 leaf nodes. A big tree size indicates the existence of more diverse labels in nodes, resulting in a huge tree. As a result, this tree has greater label overlap in nodes.
+
+```{r}
+set.seed(150)
+
+f1=rnorm(n=150,mean=1,sd=2)
+f2=rnorm(n=150,mean=-1,sd=2)
+
+dataFrame1 = data.frame(val = f1,label=rep("y",150))
+dataFrame2 = data.frame(val = f2,label=rep("n",150))
+dataFrame = rbind(dataFrame1,dataFrame2)
+
+dataFrame$label = as.factor(dataFrame$label)
+decisionTree2 = rpart(label~val,dataFrame,method="class")
+rpart.plot(decisionTree2)
+
+```
+The gini values are 0.5000, 0.3432, 0.4032, 0.4032, 0.4982, 0.4950, 0.1638, 0.3542, 0.4200,0.4662,0.4838, 0.0000, 0.3078
+
+The entropy values are -0.6931472, -0.5269080, -0.5929533, -0.5929533, -0.6913461,-0.6881388, - 0.3025378, -0.5392763, -0.6108643, -0.6589557, -0.6768585, NaN, -0.4862230
+
+
+```{r}
+
+p=c(.5,0.22,0.72,0.28,0.53,0.45,0.09,0.23,0.70,0.37,0.59,1.0,0.81)
+giniValues=sapply(p, giniScore)
+giniValues
+
+entropyValues=sapply(p, entropyValue)
+entropyValues
+
+```
+
+```{r}
+
+p=c(.5,0.22,0.72,0.28,0.53,0.45,0.09,0.23,0.70,0.37,0.59,1.0,0.81)
+giniValues=sapply(p, giniScore)
+giniValues
+
+entropyValues=sapply(p, entropyValue)
+entropyValues
+
+```
+
+The pruned tree has one root node and 2 leaf nodes. Also, the pruned tree is better than previous on with with two leafs and less overlapping labels.
+
+Pruning:
+```{r}
+prunedTree=prune.rpart(decisionTree2,cp=0.1)
+
+rpart.plot(prunedTree)
+```
+
+Calculating Gini and Entropy for all Nodes: 
+p=probability of each node
+
+The gini values are 0.5000, 0.3432, 0.4032.The entropy values are -0.6931472,-0.5269080, -0.5929533.
+
+```{r}
+
+p=c(.5,0.28,0.78)
+giniValues=sapply(p, giniScore)
+giniValues
+
+entropyValues=sapply(p, entropyValue)
+entropyValues
+
+```
+
+
+Problem-2:
+
+
+```{r}
+library(caret)
+library(rpart)
+library(rpart.plot)
+library(randomForest)
+```
+
+Loading Dataset
+```{r}
+winequalityWhite = read.csv("winequality-white.csv", sep=";")
+
+winequalityRed = read.csv("winequality-red.csv", sep=";")
+```
+
+
+Creating test train split
+```{r}
+winequalityWhite$quality = as.factor(winequalityWhite$quality)
+trainInd = createDataPartition(winequalityWhite$quality, p = 0.8, list = F)
+train.white = winequalityWhite[trainInd,]
+test.white = winequalityWhite[-trainInd,]
+
+winequalityRed$quality = as.factor(winequalityRed$quality)
+trainIndRed = createDataPartition(winequalityRed$quality, p = 0.8, list = F)
+train.red = winequalityRed[trainIndRed,]
+test.red = winequalityRed[-trainIndRed,]
+
+```
+
+Building Decision Trees for Red and white wine qualities.
+
+Comparison Red and White Decision Trees:
+
+White Wine Dataset received a decision tree accuracy of 52.45%(+-2). With the Red Wine Dataset, Decision Tree has an accuracy of 57.4%(+-2).
+
+The first split in the White Wine Dataset was at alcohol 11,while the first break in the Red Wine Dataset was at alcohol 10.
+
+Sulphates were considered in the Red Wine Dataset but not in the White Wine Dataset.
+
+Total Sulfur Dioxide was considered in the Red Wine Dataset but not in the White Wine Dataset.
+
+Free Sulfur Dioxide was considered in the White Wine Dataset but not in the Red Wine Dataset.
+
+```{r}
+decisionTreeWhite = rpart(quality~., data=train.white )
+rpart.plot(decisionTreeWhite)
+
+
+decisionTreeRed = rpart(quality~., data=train.red )
+rpart.plot(decisionTreeRed)
+
+```
+Confusion Matrix for white and red wine:
+
+```{r}
+
+predWhite = predict(decisionTreeWhite, test.white, type = 'class')
+confusionMatrix(predWhite, test.white$quality)
+
+
+predRed = predict(decisionTreeRed, test.red, type = 'class')
+confusionMatrix(predRed, test.red$quality)
+
+```
+
+Random forest Model and its confusion matrix:
+
+Note that accuracy increased to 69.63%(+-2) and 74.45%(+-2) for white and red wine after using RF classifier.
+
+
+```{r}
+
+RFWhiteModel = train(quality ~ ., data = train.white, method = "rf",preProcess = c("center","scale"))
+RFpredWhite = predict(RFWhiteModel, test.white)
+confusionMatrix(RFpredWhite, test.white$quality)
+
+
+RFRedModel = train(quality ~ ., data = train.red, method = "rf",preProcess = c("center", "scale"))
+
+RFpredRed = predict(RFRedModel, test.red)
+confusionMatrix(RFpredRed, test.red$quality)
+
+```
+
+
+
+
+Problem-3:
+
+Loading Spam Data and required libraries
+
+
+```{r}
+library(NLP)
+library(readxl)
+library(tm)
+library(readr)
+library(SnowballC)
+```
+
+Training and Test accuracy are as follows 99.16, 97%
+
+
+```{r}
+
+smsSpamData= read.csv("SMSSpamCollection",sep="\t",header=FALSE,quote="",stringsAsFactors=FALSE)
+str(smsSpamData)
+
+names(smsSpamData)[1]="type"
+names(smsSpamData)[2]="text"
+smsSpamData$type=factor(smsSpamData$type) 
+str(smsSpamData)
+
+table(smsSpamData$type)
+
+
+smsCorpus=VCorpus(VectorSource(smsSpamData$text))
+print(smsCorpus)
+
+
+
+cleansedSMSCorpus=tm_map(smsCorpus,stemDocument)
+
+cleansedSMSCorpus= tm_map(cleansedSMSCorpus,content_transformer(tolower))
+as.character(cleansedSMSCorpus[[1]])
+
+#Removing Stop Words: 
+cleansedSMSCorpus=tm_map(cleansedSMSCorpus,removeWords,stopwords())
+
+#Stripping whitespace: 
+cleansedSMSCorpus=tm_map(cleansedSMSCorpus,stripWhitespace)
+
+#Removing Punctuation: 
+cleansedSMSCorpus=tm_map(cleansedSMSCorpus,removePunctuation)
+as.character(cleansedSMSCorpus[[1]])
+
+smsDocTermMatrix=DocumentTermMatrix(cleansedSMSCorpus)
+smsDocTermMatrix
+
+smsDtmTrainData=smsDocTermMatrix[1:4169,]
+smsDtmTestData=smsDocTermMatrix[4170:5574,]
+smsTrainLabel=smsSpamData[1:4169,]$type
+smsTestLabel=smsSpamData[4170:5574,]$type
+
+
+frequentTerms=findFreqTerms(smsDtmTrainData,10)
+smsDtmFreqTrain=smsDtmTrainData[,frequentTerms]
+smsDtmFreqTest=smsDtmTestData[,frequentTerms]
+
+convertToBoolean=function(x){x=ifelse(x>0,1,0)}
+smsTrainData=apply(smsDtmFreqTrain,MARGIN = 2,convertToBoolean)
+smsTestData=apply(smsDtmFreqTest,MARGIN = 2,convertToBoolean)
+
+library(e1071)
+smsClassifier=svm(smsTrainData,smsTrainLabel)
+
+library(caret)
+smsTrainPred=predict(smsClassifier,smsTrainData)
+smsTestPred=predict(smsClassifier,smsTestData)
+confusionMatrix(smsTrainPred,smsTrainLabel)
+
+confusionMatrix(smsTestPred,smsTestLabel)
+
+
+```

@@ -1,0 +1,515 @@
+---
+title: "Assignment 02"
+author: "Sumanth Donthula"
+date: "2023-01-31"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+1. Recitation Exercises
+
+1.1.Chapter 4
+
+Exercise 4:
+
+(a)
+Since, the data is uniformly distributed the probability for each point will be same. So if we have 100 points we need 10 points, averagely 10/100 points with a fraction of 0.1 or 1/10th of total points.
+
+(b)
+Now we have 2 features which are uniformly distributed with 10% observations used in prediction. So, we need (10/100)*(10/100)=100/10000=0.01. So, we need 1% of total observations or 1/100 the fraction of total observations.
+
+(c)
+As we can see for 100 features we will be using (10/100)^100 fraction of points.
+
+(d)
+As we can see if we increase the number of predictors the fraction of points used for making prediction gradually decreasing exponentially. So, Knn can not make good predictions for larger values of p.
+
+(e)
+If p=1, length=0.1^1=0.1
+p=2, length=0.1^(1/2)=0.316
+for p=100, length=0.1^(1/100)=0.97
+As we can see increasing the features is making the side length move towards 1 which implies concentration of points is more towards boundary of hypercube.
+
+Exercise 6:
+
+(a)
+P(Y)=e^(Beta0+Beta1*X1+Beta2*X2)/1+e^(Beta0+Beta1*X1+Beta2*X2)
+
+P(Y)=e^(-6+0.05*40+1*3.5)/1+e^(-6+0.05*40+1*3.5)
+=0.377
+
+(b)
+0.5=e^(-6+0.05*?+1*3.5)/1+e^(-6+0.05*?+1*3.5)
+
+Solving this we will get 50 hrs.
+
+Exercise 7:
+
+From Bayes theorem:
+
+Pk(x)=pik*f(x)/sigma(Pil*f(x))
+
+After substituting the probabilities and f(X) values in the above eqn we will get a probability of 75.2%.
+
+Exercise 9:
+
+(a)
+odds=p(x)/(1-p(x))
+0.37=p(x)/(1-p(x))
+solving this we get, p(x)=0.27
+
+(b)
+odds=p(x)/(1-p(x))
+odds=0.16/1-0.16
+odd=0.19
+so, she might default by 19%
+
+
+1.2.Chapter 5:
+
+Exercise 2:
+
+(a)
+The probabilty of picking any observaton in the bootstrapping is 1/n.
+The probabilty that 1st bootstrap sample is not jth obesrvation is 1-1/n
+i.e, (n-1)/n
+
+(b)
+It is same as (n-1)/n the selection of second sample does not depend as bootstrap model sample with replacement.
+
+(c)
+Each time the observation not being bootstrapping sample is (1-1/n)
+so the probability of not chosing sample n times is (1-1/n)^n
+
+(d)
+The probability that jth observation is in bootstrap is 
+1 – (1-1/5)^5 = 0.672
+
+(e)
+The probability that jth observation is in bootstrap is (1/n)^100
+1 –(1-1/100)^100 = 0.634
+
+(f)
+The probability that jth observation is in bootstrap is 
+1 –(1-1/10000)^10000 = 0.632
+
+(g)
+We can see that plot reaches assymptote at 0.632.
+
+```{r}
+
+x <- 1:100000
+plot(x, 1 - (1 - 1/x)^x)
+
+```
+(h)
+As n goes to infinity the probability of bootstrap sample containing jth observation will become 1-1/e~0.63
+
+```{r}
+
+store <- rep(NA, 10000)
+for (i in 1:10000) {
+    store[i] <- sum(sample(1:100, rep = TRUE) == 4) > 0
+}
+mean(store)
+
+
+
+```
+
+Exercise 3:
+
+a)
+K fold is a method in which model the data set is split into test and train in the ratio n/k for test set and n(1-1/k) samples for training set. After building models with different hold out sets. Once the evaluation is done we will obtain mean of mean squared errors of the models.
+
+b)
+(i)
+validation test can be easily applied but it has some drawbacks.
+
+1)The test error can be highly varibale, depending on which observations are included in the validation set.
+
+2)Since only a few subsets of data is available in training set, fitting a model with less data results in poor performance so, validation error might over stimate test error.    
+
+(ii)
+LOOCV produces higher variance as the model will be trained on highly correlated data. Moreover it has high computation cost as it needs to do fitting for n samples.
+
+2. Practicum problems
+
+Problem 1:
+
+Reading data and doing some pre processing
+```{r}
+abalone = read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/abalone/abalone.data", header=FALSE)
+
+
+abalone_reduced=subset(abalone, abalone$V1[]!= "I")
+
+unique(abalone_reduced$V1)
+
+abalone_reduced$V1=ifelse(abalone_reduced$V1=="M",1,0)
+
+```
+
+splitting test and train datasets
+
+```{r}
+library(caret)
+set.seed(0)
+trainIndex = createDataPartition(abalone_reduced$V1, p = .8, 
+                                  list = FALSE)
+
+abaloneTrain=abalone_reduced[trainIndex,]
+abaloneTest=abalone_reduced[-trainIndex,]
+
+
+```
+
+Training the logistic model.
+
+By observing P values of predictors V1, V2 and V3 are very less and significant.
+
+```{r}
+
+logisticModel = glm(V1~., data = abaloneTrain, family = binomial(link = 'logit'))
+
+summary(logisticModel)
+
+
+
+```
+Based on the 95% confidence interval observations, V6 does not have 0 in its range, So we can reject the null hypothesis.
+
+```{r}
+
+confint(logisticModel)
+
+```
+Building Confidence Interval
+
+```{r}
+
+#testDataFrame=data.frame(abaloneTest$V2,abaloneTest$V3,abaloneTest$V4,abaloneTest$V5,abaloneTest$V6,abaloneTest$V7,abaloneTest$V8,abaloneTest$V9)
+
+#colnames(testDataFrame)=c('V2','V3','V4','V5','V6','V7','V8','V9')
+
+predprob = predict(logisticModel,abaloneTest ,V1="response")
+
+
+pred=ifelse(predprob>0.5,1,0)
+
+
+
+library(caret)
+
+cf=confusionMatrix(as.factor(pred),as.factor(abaloneTest$V1))
+cf
+```
+
+Plotting ROC curve. From the curve we can observe that the accuracy for cut off value of 0.5 is less compared to other thresholds.
+
+```{r}
+library(ROCR)
+
+predic = prediction(predprob,abaloneTest$V1)
+eval = performance(predic, "acc")
+plot(eval)
+
+
+```
+
+
+```{r}
+perfROC = performance(predic, measure = "tpr", x.measure = "fpr")
+plot(perfROC)
+abline(0,1)
+```
+
+
+
+
+From the Correlation plot we can observe there is high correlation in predictors. Having high correlation results in poor preformance of the model.
+
+```{r}
+library(corrplot)
+corrplot(cor(abalone_reduced[,-1]), method = "number")
+```
+Problem 2:
+
+Loading the Dataset and filling ? in stalk root columns with na and dropping columns with na.
+
+```{r}
+mushroom = read.csv("https://archive.ics.uci.edu/ml/machine-learning-databases/mushroom/agaricus-lepiota.data", header=FALSE)
+
+
+names(mushroom) <- c("class","cap.shape","cap.surface","cap.color","bruises","odor","gill.attachment","gill.spacing",
+"gill.size","gill.color","stalk.shape","stalk.root","stalk.surface.above.ring","stalk.surface.below.ring",
+"stalk.color.above.ring","stalk.color.below.ring","veil.type","veil.color","ring.number","ring.type","spore.print.color","population",
+"habitat")
+
+summary(mushroom)
+
+library(dplyr)
+
+mushroom <- mutate(mushroom,stalk.root=ifelse(stalk.root=='?',NA,stalk.root))
+table(is.na(mushroom))
+
+library(tidyr)
+colSums(is.na(mushroom))
+mushroom=drop_na(mushroom)
+colSums(is.na(mushroom))
+
+```
+
+Splitting Train and Test Data.
+
+```{r}
+library(caret)
+set.seed(0)
+trainIndex = sample(1:nrow(mushroom),size=0.8*nrow(mushroom))
+
+mushroomTrain=mushroom[trainIndex,]
+mushroomTest=mushroom[-trainIndex,]
+
+
+
+```
+
+
+Training Classifier.
+
+From the Confusion Matrix we can see the train accuracy as 95.55 %.The false Positive value for test set is 189.
+
+```{r}
+library(e1071)
+
+Classifier <- naiveBayes(class ~ ., data = mushroomTrain)
+
+y_pred_train <- predict(Classifier, newdata = mushroomTrain[,-1])
+
+cf=confusionMatrix(table(y_pred_train,mushroomTrain$class))
+cf
+
+y_pred_train=data.frame(y_pred_train)
+
+
+
+```
+From the Confusion Matrix we can see the test accuracy as 95.66 %. The false Positive value for test set is 45.
+
+```{r}
+
+y_pred_test <- predict(Classifier, newdata = mushroomTest[,-1])
+
+
+cf=confusionMatrix(table(y_pred_test,mushroomTest$class))
+cf
+
+
+
+```
+Problem 3:
+
+Loading data set and splitting data
+
+```{r}
+
+yacht_hydrodynamics = read.table(url("https://archive.ics.uci.edu/ml/machine-learning-databases/00243/yacht_hydrodynamics.data"),header=FALSE)
+
+names(yacht_hydrodynamics) <- c("Longitudinal","Prismatic_coefficient", "Length_displacement_ratio","Beam_draught_ratio","Length_beam_ratio","Froude_number","Residuary_resistance")
+
+
+library(caret)
+
+
+set.seed(0)
+trainIndex = createDataPartition(yacht_hydrodynamics$Residuary_resistance, p = .8, 
+                                  list = FALSE)
+
+yachtTrain=yacht_hydrodynamics[trainIndex,]
+yachtTest=yacht_hydrodynamics[-trainIndex,]
+
+```
+
+
+Building the model. From the summary R2 is 0.6573 and the RMSE is calculated as 8.693.
+```{r}
+
+Model=lm(Residuary_resistance~.,data=yachtTrain)
+
+summary(Model)
+
+
+trainDataFrame=data.frame(yachtTrain$Longitudinal,yachtTrain$Prismatic_coefficient,yachtTrain$Length_displacement_ratio,yachtTrain$Beam_draught_ratio,yachtTrain$Length_beam_ratio,yachtTrain$Froude_number)
+
+
+colnames(trainDataFrame)=c('Longitudinal','Prismatic_coefficient','Length_displacement_ratio','Beam_draught_ratio','Length_beam_ratio','Froude_number')
+
+
+predicted=predict(Model,trainDataFrame)
+
+library(Metrics)
+rmse(yachtTrain$Residuary_resistance, predicted)
+
+```
+
+Performing Bootstrapping
+
+```{r}
+
+train.control <- trainControl(method = "boot", number = 1000)
+
+model_boot <- train(Residuary_resistance~.,data=yachtTrain, method = "lm",
+               trControl = train.control)
+
+print(model_boot)
+
+
+```
+
+Calculating RMSE and R squared values for bootstrap models and RMSE plot.
+
+```{r}
+
+RMSE_Values=model_boot$resample["RMSE"]$RMSE
+Squared_values=model_boot$resample["Rsquared"]$Rsquared
+
+
+mean(RMSE_Values)
+mean(Squared_values)
+
+hist(RMSE_Values)
+
+```
+
+From the above values we can see that for test set, the values are almost same for both basic and bootstrap models.
+
+Problem 4:
+
+Loading Data set and splitting data to test and train sets.
+
+```{r}
+germanCredit = read.table("https://archive.ics.uci.edu/ml/machine-learning-databases/statlog/german/german.data-numeric", header=FALSE)
+
+germanCredit$V25<-factor(germanCredit$V25)
+
+
+library(caret)
+set.seed(0)
+trainIndex = createDataPartition(germanCredit$V25, p =.8, 
+                                  list = FALSE)
+
+creditTrain=germanCredit[trainIndex,]
+creditTest=germanCredit[-trainIndex,]
+
+```
+
+Building logistic model
+
+```{r}
+
+Model=glm(V25~ ., data = creditTrain, family = binomial(link = 'logit'))
+
+```
+
+
+
+Building confusion matrix for test and train sets for basic model.
+
+From the confusion matrix we can see Precisionm, Recall and F1 for test and train set.
+
+Test Values:
+
+Precision : 0.7457          
+Recall : 0.9214          
+F1 : 0.8243
+
+Train Values:
+
+Recall : 0.9429          
+F1 : 0.8462          
+Prevalence : 0.7000  
+
+```{r}
+
+
+predprob = predict(Model,creditTrain)
+
+pred=ifelse(predprob>0.5,2,1)
+
+
+
+library(caret)
+
+print("Confusion Matrix for Train set of Basic Model")
+
+cf=confusionMatrix(as.factor(pred),as.factor(creditTrain$V25), mode = "everything",positive="1")
+cf
+
+
+predprob = predict(Model,creditTest)
+
+pred=ifelse(predprob>0.5,2,1)
+
+
+
+library(caret)
+
+print("Confusion Matrix for Test set of Basic Model")
+
+
+cf=confusionMatrix(as.factor(pred),as.factor(creditTest$V25), mode = "everything",positive="1")
+cf
+```
+
+Building confusion matrix for test and train sets for cv models.
+
+From the confusion matrix we can see Precision, Recall and F1 for test and train sets.
+
+Test Values:
+
+Precision : 0.7457          
+Recall : 0.9214          
+F1 : 0.8243 
+
+Train Values:
+
+Precision : 0.7674          
+Recall : 0.9429          
+F1 : 0.8462 
+
+
+```{r}
+
+ctrl<-trainControl(method="cv",number=10)
+CrossVadlid_Modl<-train(V25~.,data=creditTrain,trControl=ctrl,method="glm")
+CrossVadlid_Modl<-CrossVadlid_Modl$finalModel
+pred_train<-predict(CrossVadlid_Modl,creditTrain)
+
+pred=ifelse(pred_train>0.5,2,1)
+
+library(caret)
+print("Confusion Matrix for Train set of cv Model")
+
+cf=confusionMatrix(as.factor(pred),as.factor(creditTrain$V25), mode = "everything",positive="1")
+cf
+
+
+predprob = predict(CrossVadlid_Modl,creditTest)
+
+pred=ifelse(predprob>0.5,2,1)
+
+
+
+library(caret)
+
+print("Confusion Matrix for Test set of CV Model")
+
+cf=confusionMatrix(as.factor(pred),as.factor(creditTest$V25), mode = "everything",positive="1")
+cf
+
+```
+
+After looking at values of F1, Precision and recall we can see that these are almost same for both basic model and cv model.

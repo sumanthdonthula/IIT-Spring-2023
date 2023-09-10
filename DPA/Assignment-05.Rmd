@@ -1,0 +1,338 @@
+---
+title: "Assignment-05"
+author: "Sumanth Donthula"
+date: "2023-04-29"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Recitation Exercises
+Chapter 12
+
+Exercise1.a)
+
+
+Exercise1.b)
+
+We calculate the cluster centroid for each of the K clusters in step 2 of algorithm 12.2, and we then allocate each observation to the cluster whose centroid is closest. The value of RHS will decline with each iteration. This is due to the fact that it represents the sum of the squared deviations of each observation from the mean. As a result, we can see that each iteration of the Kmeans clustering algorithm results in a lower objective. 
+
+
+
+Exercise 2.a)
+
+![Solution](C:/Users/SRINU/Desktop/Img1.jpeg)
+
+![Solution](C:/Users/SRINU/Desktop/Img2.jpeg)
+
+```{r}
+
+my_matrix = matrix(c(0, 0.3, 0.4, 0.7,
+                      0.3, 0, 0.5, 0.8,
+                      0.4, 0.5, 0, 0.45,
+                      0.7, 0.8, 0.45, 0), nrow = 4)
+
+my_dist = as.dist(my_matrix)
+my_tree = hclust(my_dist, method = "complete")
+plot(my_tree)
+
+```
+
+
+
+Exercise 2.b)
+
+![Solution](C:/Users/SRINU/Desktop/Img3.jpeg)
+
+
+```{r}
+# Create a distance matrix
+dist_matrix = as.dist(matrix(c(0, 0.3, 0.4, 0.7,
+                                0.3, 0, 0.5, 0.8,
+                                0.4, 0.5, 0, 0.45,
+                                0.7, 0.8, 0.45, 0), nrow = 4))
+
+# Generate a dendrogram using single linkage method
+dendrogram = hclust(dist_matrix, method = "single")
+
+# Plot the dendrogram
+plot(dendrogram)
+
+```
+Exercise 2.c)
+
+We will have clusters (1,2) and (3,4).
+
+Exercise 2.d)
+
+We have clusters ((1,2),3) and (4)
+
+Exercise 2.e)
+
+The position of the two clusters being fused can be switched at each fusion point in the dendrogram without altering the dendrogram's interpretation, as it is explained in the chapter. Draw a dendrogram that is comparable to the one in (a), with at least two of the leaves in a different position, but the dendrogram's meaning being the same.
+
+```{r}
+dendrogram = as.dist(matrix(c(0,0.3,0.4,0.7,
+                               0.3,0,0.5,0.8,
+                               0.4,0.5,0,0.45,
+                               0.7,0.8,0.45,0), nrow = 4))
+hclust_res = hclust(dendrogram, method = "complete")
+plot(hclust_res, labels = c(2, 1, 4, 3))
+```
+
+
+Exercise 3.a)
+
+Plotting the observations
+
+```{r}
+Data = cbind(c(1,1,0,5,6,4),c(4,3,4,1,2,0)) 
+plot(Data[,1],Data[,2])
+```
+
+Exercise 3.b)
+
+Randomly assigning a cluster label to each observation
+
+```{r}
+clusterLab = sample(2,nrow(Data),replace = T)
+clusterLab
+plot(Data[,1],Data[,2],col=(clusterLab+1),pch=20)
+```
+
+Exercise 3.c)
+
+Computing the centroid for each cluster.
+
+```{r}
+cent1 = c(mean(Data[clusterLab == 1, 1]), mean(Data[clusterLab == 1, 2]))
+cent2 = c(mean(Data[clusterLab == 2, 1]), mean(Data[clusterLab == 2, 2]))
+plot(Data[,1], Data[,2], col=(clusterLab + 1), pch = 20, cex = 2)
+points(cent1[1], cent2[2], col = 2, pch = 4)
+points(cent2[1], cent2[2], col = 3, pch = 4)
+```
+
+Exercise 3.d)
+
+Assigning each observation to the centroid to which it is closest, in
+terms of Euclidean distance
+
+```{r}
+clusterLab = c(1,1,1,2,2,2)
+plot(Data[, 1], Data[, 2], col = (clusterLab + 1), pch = 20)
+points(cent1[1], cent1[2], col = 2, pch = 4)
+points(cent2[1], cent2[2], col = 3, pch = 4)
+```
+
+Exercise 3.e)
+
+On assigning each observation to the centroid to which it is closest, we see that nothing changes.
+
+```{r}
+cent1 = c(mean(Data[clusterLab == 1, 1]), mean(Data[clusterLab == 1, 2]))
+cent2 = c(mean(Data[clusterLab == 2, 1]), mean(Data[clusterLab == 2, 2]))
+plot(Data[,1], Data[,2], col=(clusterLab + 1), pch = 20)
+points(cent1[1], cent1[2], col = 2, pch = 4)
+points(cent2[1], cent2[2], col = 3, pch = 4)
+```
+
+Exercise 3.f)
+
+We color the observations in a) according to the clusters obtained:
+
+```{r}
+plot(Data[, 1], Data[, 2], col=(clusterLab + 1), pch = 20)
+```
+
+Exercise 4.a)
+
+Single linkage utilizes the least inter-observation distance, whereas Complete Linkage utilizes the largest. The fusion will appear higher on the tree than the single linkage in the case of complete linkage. Both linkages will only occur at the same height if all the distances are equal. 
+
+
+Exercise 4.b)
+
+Since there are only single elements, the minimal and maximal distances for a single linkage and a complete linkage are both the same. The fusion will therefore take place at the same height.
+
+Practicum Problems
+
+Problem 1
+
+Data is loaded and required operations are implemented.
+
+Answers to Questions in Problems:
+
+The biplot reveals that Malic is the feature that stands in opposition to Hue. Since the two features' directions are in opposition to one another, it follows that their response profiles and intended meanings will differ in the context created by the data. We estimate the PCA component loadings to support this:
+
+We can see from the below-mentioned loadings that Hue has a loading of 0.297 and Malic has a loading of -0.309, demonstrating their statistical oppositeness.
+
+The screeplot shows that component 4 is where the slope changes. Additionally, the variance explained by PC1 is 0.3619885 and by PC2 is 0.1920749, according to the summary. 
+
+
+```{r}
+
+# Load data from URL
+url = "https://archive.ics.uci.edu/ml/machine-learning-databases/wine/wine.data"
+raw_data = read.csv(url, header = FALSE)
+
+# Assign column names to data
+colnames(raw_data) = c('Type', 'Alcohol', 'Malic', 'Ash', 'Alcalinity', 
+                        'Magnesium', 'Phenols', 'Flavanoids', 'Nonflavanoids', 
+                        'Proanthocyanins', 'Color', 'Hue', 'Dilution', 'Proline') 
+
+# Create a copy of the data
+wine_data = raw_data
+
+# Perform principal component analysis
+pca_wine = princomp(wine_data[,-1], cor = TRUE, scores = TRUE, covmat = NULL)
+
+# Display summary of results
+summary(pca_wine)
+
+# Plot the PCA results
+plot(pca_wine, col = 'black')
+
+# Display biplot of PCA loadings and scores
+biplot(pca_wine, col = 'blue')
+
+# Display the loadings for each principal component
+pca_wine$loadings
+
+# Display scree plot of eigenvalues
+screeplot(pca_wine, type = "lines", col = 'black')
+
+# Display summary of PCA results
+summary(pca_wine)
+
+
+
+```
+
+
+Problem 2
+
+Data is loaded and required operations are implemented.
+
+Answers to Questions in Problems:
+
+We can see that the variables' means and variances are highly varied. So that the k-means method won't be dependent on arbitrary unit value, we shall scale the data.
+
+```{r}
+head(USArrests)
+dataStatistics=data.frame(Min=apply(USArrests,2,min), Med=apply(USArrests,2,median),
+Mean=apply(USArrests,2,mean), SD=apply(USArrests,2,sd), Max=apply(USArrests,2,max))
+dataStatistics=round(dataStatistics,1) 
+head(dataStatistics)
+
+scaledData=as.data.frame(scale(USArrests))
+head(scaledData)
+
+kmeansResult2=kmeans(scaledData,2,nstart = 25)
+kmeansResult2
+
+kmeansResult3=kmeans(scaledData,3,nstart = 25)
+kmeansResult3
+
+kmeansResult4=kmeans(scaledData,4,nstart = 25)
+kmeansResult4
+
+kmeansResult5=kmeans(scaledData,5,nstart = 25)
+kmeansResult5
+
+kmeansResult6=kmeans(scaledData,6,nstart = 25)
+kmeansResult6
+
+kmeansResult7=kmeans(scaledData,7,nstart = 25)
+kmeansResult7
+
+kmeansResult8=kmeans(scaledData,8,nstart = 25)
+kmeansResult8
+
+kmeansResult9=kmeans(scaledData,9,nstart = 25)
+kmeansResult9
+
+kmeansResult10=kmeans(scaledData,10,nstart = 25)
+kmeansResult10
+
+
+library("factoextra")
+
+fviz_nbclust(scaledData, kmeans, method = "wss") + geom_vline(xintercept = 4, linetype = 2, col='red')
+
+kmeansResult4=kmeans(scaledData,4,nstart = 25)
+kmeansResult4
+
+fviz_cluster(kmeansResult4, data = scaledData,palette = c("red", "blue", "green", "purple"), ggtheme = theme_minimal(),main = "Partitioning Clustering Plot")
+
+
+
+```
+
+
+Problem-3
+
+
+Data is loaded and required functions are implemented.
+
+Answers to Questions in Problems:
+
+We will scale the observations as there are different types of features like pH, density and alcohol. 
+
+We can see that residual sugar, total sulfur dioxide, and free sulfur dioxide are the features that differ the most. 
+The complete linkage is more stable because the differences are comparably less.
+
+
+```{r}
+
+
+# Set URL for white wine dataset
+white_wine_url = "https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/winequality-white.csv"
+
+# Read in the white wine dataset
+white_raw_data = read.csv(white_wine_url, header=TRUE, sep=";")
+summary(white_raw_data)
+
+# Subset the white wine dataset to remove the quality column
+white_wine_filtered_data = subset(white_raw_data, select=-(quality))
+
+# Perform hierarchical clustering with single linkage
+hclust_single_linkage = hclust(dist(white_wine_filtered_data), method="single")
+plot(hclust_single_linkage, main="Clustering with Single Linkage", xlab="", sub="", cex=0.9, col='blue')
+
+# Perform hierarchical clustering with complete linkage
+hclust_complete_linkage = hclust(dist(white_wine_filtered_data), method="complete")
+plot(hclust_complete_linkage, main="Clustering with Complete Linkage", xlab="", sub="", cex=0.9, col='blue')
+
+# Scale the white wine dataset
+wine_scaled_data = scale(white_wine_filtered_data)
+
+# Plot hierarchical clustering with complete linkage and scaled features
+plot(hclust(dist(wine_scaled_data), method="complete"), main="Clustering with Complete Linkage and Scaled Features", col='blue')
+
+# Plot hierarchical clustering with single linkage and scaled features
+plot(hclust(dist(wine_scaled_data), method="single"), main="Clustering with Single Linkage and Scaled Features", col='blue')
+
+# Perform clustering with complete linkage and 2 clusters
+complete_linkage_cutree = cutree(hclust_complete_linkage, k=2)
+complete_linkage_data = cbind(white_wine_filtered_data, cluster=complete_linkage_cutree)
+
+# Perform clustering with single linkage and 2 clusters
+single_linkage_cutree = cutree(hclust_single_linkage, k=2) 
+single_linkage_data = cbind(white_wine_filtered_data, cluster=single_linkage_cutree)
+
+# Show the first few rows of the complete linkage data
+head(complete_linkage_data)
+
+# Show the first few rows of the single linkage data
+head(single_linkage_data)
+
+# Compute mean values for each cluster for complete linkage data
+aggregate_complete = aggregate(complete_linkage_data, by=list(cluster=complete_linkage_data$cluster), mean)
+
+# Compute mean values for each cluster for single linkage data
+aggregate_single = aggregate(single_linkage_data, by=list(cluster=single_linkage_data$cluster), mean)
+
+
+
+```

@@ -1,0 +1,530 @@
+---
+title: "Assignment-03"
+author: "Sumanth Donthula"
+date: "2023-03-03"
+output:
+word_document: default
+pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tinytex)
+```
+
+Recitation Exercises
+
+chapter - 6
+
+1.)
+a.)
+Understanding how Best Subset and other step-wise selections are performed allows us to intuitively realize that the best subset pick will have less training RSS than the other two.
+
+The reason for this is that the Best Subset Selection approach creates 2k models with each predictor and each subset of predictors. At each phase, it would choose the best model with the least amount of training RSS.
+
+Once we follow a step-wise (forward or backward) order (and observe just 1+ k(k+1)/2 models), we will not evaluate additional models that may provide less training error.
+
+b.)
+
+It's hard to determine which of the following models gives the lowest test RSS because all the above techniques employ algorithms based on reducing training RSS to select the best models when comparing models of the same size. We next utilize cross validation error/Mallow's Cp/AIC/BIC, and so on, to choose the final model among k+1 models. Nevertheless, the initial decision is made with the least training error in mind, which does not ensure the lowest test error.
+
+c.)
+
+i.)
+TRUE: The k-variable model has k variables ( predictors ). Therefore a k variable model identified by forward step-wise selection will undoubtedly be a subset of a (k+1) variable model identified by forward step-wise selection since it simply requires adding one more variable and employing forward step-wise selection again.
+
+ii.)
+TRUE: The same explanation as previously applies here as well. The k variable model is already included in the collection of models evaluated backwards and forwards. By adding one more variable and using the same procedure, predictors in the k variable model become a subset of predictors in the (k+1) model.
+
+iii.)
+FALSE: This is occasionally true, but not always. Backward step-by-step examination of k predictors and formation of model, then removal of one least relevant predictor and formation of model with k-1 predictors, and so on. In the forward direction, we consider a model that starts with one predictor and subsequently increases one predictor at a time. As a result, we cannot be positive that the predictors in the k= variable model identified via backward step-wise selection are a subset of the predictors in the k+1 variable model.
+
+iv.)
+FALSE: The same explanation (as given in (iii)) may be used to understand why it is untrue.
+
+v.)
+FALSE : The predictors found by best subset selection in the k-variable model are a subset of the predictors identified by best subset selection in the (k + 1)-variable model.
+
+Because the best subset selects the best model for each k, the preceding assumption is false.
+
+
+2.)
+a.)
+(iii) option
+
+We know that when the lambda value grows, several of the predictor coefficients in Lasso become absolutely zero, reducing the model's flexibility ( bias variance trade off actually take place – meaning it brings substantial decrease in variance though there is a slight increase in bias of the model).
+
+b.)
+(iii) Option
+
+The same idea that we used for Lasso before applies here. The ridge penalty makes the model less flexible but significantly reduces variation. One downside of ridge regression is that it uses all predictors and the values of predictor coefficients reduce but do not reach zero as in Lasso.
+
+c.)
+(ii) option
+
+We know that non-linear models are more flexible, with higher variance and lower bias. When we consider the estimated MSE equation, which comprises the elements square of bias, variance, and irreducible error, we may intuitively conclude that the prediction accuracy of a non-linear model will be high when the decrease in bias is greater than the increase in variance.
+
+
+3.)
+a.)
+(iv) option
+
+This is easily described by the contour plots of the coefficients (of predictors) and the value of s. ( square for Lasso ). As we do the lasso, we are attempting to discover the set of coefficient estimates that result in the minimum RSS, subject to the constraint that there is a maximum size s. If s is big enough, the coefficients of Lasso will be similar to those of Least squares. The oval shapes in the graph represent the same RSS at any position along the curve.
+
+
+In addition, the outer ellipse has more RSS than the inner ellipse.
+Therefore, when s, the constraint, climbs from 0 to some positive values, the square size increases and it moves towards the inner ellipses, implying that as s increases, the value of training RSS decreases and so the answer is (iv)
+
+
+b.)
+(ii) option
+
+Except for the intercept, the only possible coefficient values for s=0 are zeroes. That means that at s=0, we have a null model that is independent of all predictors. The model's flexibility grows as the value of s increases and approaches towards least square estimates. We know from our basics that when model flexibility rises, bias lowers, variance increases, and test MSE drops to a certain amount before increasing at a certain point. As a result, we picked (ii) as the best alternative.
+
+c.)
+(iii)Steadily increase
+
+The approach used to explain question (b) may also be applied here. When s grows, the model's flexibility improves, and therefore the value of variance climbs steadily until s reaches a value where the coefficients match the least square estimate.
+
+d.)
+(iv) Steadily decrease
+
+The same idea as above may be applied here. When s grows from 0, the model's flexibility improves, and so the bias decreases continuously until the least square estimate meets the limitations of s.
+
+
+e.)
+(v) Remains constant
+
+The irreducible error occurs regardless of how good the model is, and it is caused by noise in the system ( for not considering unknown element ).
+Hence we don't notice a commensurate increase/decrease in irreducible error and thus the solution dependent on the model's flexibility or coefficient values.
+
+4.)
+a.)
+(iii)Steadily increase
+
+It is worth noting that when $\lambda=0$, the above equation equals LSE ( Least Squares Estimate ).
+The model developed using least squares coefficients yields the smallest training RSS. The level curves of coefficients shift away from the LSE as the value of $\lambda$ grows. As a result, the training error continues to rise.
+
+b.)
+(ii) Decrease at first, then gradually increase in a U shape. To mitigate the over-fitting problem that LSE generally produces, we add penalty to the Least Square estimate (referred to as ridge or Lasso depending on the penalty selected).
+When $\lambda$ rises, the penalty increases, and the model built in this manner tends to under-fit the model and improve on reducing test error. Nevertheless, this cannot continue indefinitely, and after a certain amount, the rise in bias surpasses the decrease in variance, resulting in an increase in test error.
+
+c.)
+(iv)Steadily decrease
+
+When the $\lambda$ value grows, the coefficient value shrinks towards zero, making the model less flexible than the initial model. We employ shrinkage ideas to reduce variation as much as feasible ( till we get almost zero variance ). When the coefficients approach 0, the model approaches zero variance.
+
+d.)
+(iii) Steadily increase
+
+The same intuition that was employed in the last response may be applied here. The model becomes less flexible as $\lambda$ grows, and variation tends to diminish. When the value of $\lambda$ increases, the bias tends to rise as the coefficients go to zero.
+
+
+e.)
+(v) Remains constant
+
+Irreducible error is unaffected by the coefficients or penalty amount employed in the preceding equation. It arises as a result of system noise and is hence unrelated to the value of $\lambda$. As a result, the solution.
+
+5.)
+Hand written and attached separately.
+
+Chapter - 7
+
+2.)
+a.)
+
+The idea that $∫[g^{(m)}(x)]^2 dx$ is a summation of $[g^{(m)}(x)]^2$ throughout the range of x, thus $ĝ$ will be the g that minimizes
+We can understand why large $\lambda$ values drive the penalty term $\lambda∫[g^{(m)}(x)]^2dx$ towards zero. At the opposite extreme, a $\lambda= 0$ eliminates this factor altogether from the equation, leaving us free to select any g that minimizes the loss function $\sum n_i= 1(y_i−g(x_i))^2$
+
+b.)
+In this case ,as $\lambda=\infty$, $g^!(x)$ tends to zero and it is possible when g(x)is some constant c. Therefore $\hat{g}(x)=c$ ( some constant ).( So g(x) will be a straight line
+drawn parallel to X-axis ) The value of constant c, which minimizes RSS is $c = \frac{1}{n}\sum_{i=1}^{n} y_i$
+
+
+c.)
+As $\lambda =\infty$, it forces the 2nd derivative of g(x) to zero, i.e., $g^{!!}(x)= 0$. This is feasible if g(x) is a linear equation of the type g(x) = ax+b, and this is the line obtained by least squares since it has the smallest RSS (albeit for all linear equations, the second derivative is zero). 
+
+d.)
+
+Using the same idea as before, we may assert that  $\lambda=\infty$, $g^{!!!}(x)=0$ and hence $\hat{g}(x)$ will be a quadratic of the form ax2+bx+c obtained from least squares ( as it will have minimum RSS)
+
+e.)
+From the equation $\hat{g}$ given in the question, We can see that as $\lambda=0$, the penalty term becomes zero and just the loss term remains. Therefore, in order to reduce RSS to zero, g(x) can adopt any shape that passes through all points in the training data and can be too flexible or over-fitting.
+
+3.)
+Let $Y =β_0 +β_1b_1(X)+β_2b_2(X)+ε$ be Equation 1
+
+Let us find the equations when X<1 and X>=1 separately.
+We get two different functions.
+
+Applying all the given data into Equation 1 when
+When X<1:
+$\hat{y} = 1+X$ -> Let this be equation 2
+
+When X>=1:
+$\hat{y}= 1 + X - 2(X-1)^2$
+=>$\hat{Y} = 1+ X- 2X^2 + 4X – 2$
+=>$\hat{y} = -2X^2+5X-1$ -> let this be ation 3
+
+Therefore the curve will be a straight line from X=-2 to X=1 and then a quadratic curve from X=1 to X=2 in the region between X=-2 and X=2.
+The critical point is obtained by calculating the first order derivative of Eq3 and equating the result to zero.
+
+```{r}
+x = -2:2
+y = 1 + x + -2 * (x-1)^2 * I(x>1)
+plot(x, y)
+```
+
+
+4.)
+Let us substitute all of the supplied values for the regions in the above equation of y.
+
+-2 < X < 0:
+$\hat{y}= 1$ ;
+
+0 ≤ X < 1:
+$\hat{y} = 2$
+
+1 ≤ X ≤ 2:
+$\hat{y} = 2-X+1 = 3-X$
+
+The asked is just for the region between X=-2 and X=2, therefore we  need not check what the equation would be for X>2.
+So,
+
+for -2≤ X < 0, the slope is zero and intercept is 1
+
+for 0 ≤ X < 1, the slope is zero and intercept is 2
+
+For 1 ≤ X ≤ 2, the slope is -1 and intercept is 3
+
+```{r}
+x = -2:2
+y = c(1 + 0 + 0, # x = -2
+      1 + 0 + 0, # x = -1
+      1 + 1 + 0, # x = 0
+      1 + (1-0) + 0, # x = 1
+      1 + (1-1) + 0 # x =2
+      )
+plot(x,y)
+```
+
+5.)
+a.)
+The above equations clearly show that when the value of $\lambda$ approaches infinity, the penalty term becomes increasingly relevant.
+
+When $\lambda → \infty$, for $\hat{g}_1$ , $\hat{g}_3$ (x) → 0, This indicates that the highest order polynomial that meets this condition will be of the form g(x) = ax2 + bx + c. ( because the 3rd order derivative is zero). As a result, g^1 will be a quadratic that reduces training RSS.
+
+When $\lambda → \infty$, for $\hat{g}_2$ , $\hat{g}_4$ (x) → 0, This indicates that the highest order polynomial that meets this condition will be of the type g(x) = ax3 + bx2 + cx + d ( because the 4th order derivative is zero). As a result, g^2 will be a cubic that reduces training RSS.
+
+As $\hat{g}_2$ is more flexible compared to $\hat{g}_1$, $\hat{g}_2$ will have less RSS compared to $\hat{g}_1$ for a given high value of RSS.
+
+b.)
+We cant say which of the above have smaller test RSS. It solely depends on the true relationship of the predictors and the order of such relationship. Based on the true relation, $\hat{g}_1$  can be under-fit and $\hat{g}_2$ can be over-fit. So we can say for sure if $\hat{g}_1$ or $\hat{g}_2$ have the small test RSS.
+
+c.)
+$\lambda=0$ implies the penalty term totally becomes zero. And that means both $\hat{g}_1$ and $\hat{g}_2$ would have the same training RSS (of zero if all the xi are unique). We may just have any function that interpolates all of the training observations with no limitations on g.
+
+In terms of test RSS, we cannot be certain of having a low test RSS since a model that covers all training points and has a training RSS of zero would be horribly over-fit and have a high test RSS. Assume that the same interpolating function was used for both $\hat{g}_1$ & $\hat{g}_1$ (e.g. Both would have the same test RSS if they were a linear spline with knots at each unique xi).
+
+Practicum Problems
+
+Problem 1
+
+Loading the mtcars data frame
+
+```{r pressure, echo=FALSE}
+mtcars=data.frame(mtcars)
+summary(mtcars)
+
+```
+performing test/train split
+
+```{r}
+
+library(caret)
+set.seed(0)
+
+trainIndex = createDataPartition(mtcars$am,times=1,p=0.8,list = F)
+trainset = mtcars[trainIndex,]
+testset = mtcars[-trainIndex,]
+
+```
+
+fitting a linear model and displaying coef values, mean squared error of Linear Model
+
+wt is a predictor based on the statistics as it has the lowest p-value as per the resulting t-statistic above.
+
+```{r}
+
+linearModel = lm(mpg~.,data=trainset)
+
+mean((predict(linearModel,testset)-testset$mpg)^2)
+summary(linearModel)
+coef(linearModel)
+
+```
+
+performing ridge regression initializing lambda and plotting MSE vs $\lambda$
+
+```{r}
+
+x = model.matrix(mpg~.,trainset)[,-1]
+
+y = trainset$mpg
+
+library(glmnet)
+
+lambdaSeq=10^seq(5,-5,by = -.1)
+
+
+ridgeCrossVal = cv.glmnet(x, y, alpha = 0,lambda = lambdaSeq)
+plot(ridgeCrossVal)
+
+```
+
+finding optimal lambda
+
+```{r}
+#Finding the best lambda value:
+lambdaOptimal = ridgeCrossVal$lambda.min
+print(lambdaOptimal)
+
+```
+Building a Ridge Regression Model using GLMNET
+
+```{r}
+ridgeModel = glmnet(x, y, alpha = 0, lambda  = lambdaOptimal)
+```
+ 
+Model Summary
+
+```{r}
+summary(ridgeModel)
+
+```
+
+displaying coef values
+
+```{r}
+coef(ridgeCrossVal,s="lambda.min")
+```
+
+```{r}
+X =  model.matrix(mpg~.,testset)[,-1]
+modelPredict = predict(ridgeModel,s =,newx = X, type = "response")
+
+mean((modelPredict-testset$mpg)^2)
+```
+We can observe that doing Ridge Regression reduces MSE on test data from 10.71 to 1.18.
+The shift in coefficients is visible after doing Ridge Regression. The coefficients have decreased and become closer to zero, but none are precisely zero. As a result, we may argue that Ridge regression conducted shrinkage but not variable selection.
+
+Problem 2:
+
+Loading libraries and data set
+
+```{r}
+library(ggplot2)
+library(lattice)
+library(caret)
+
+swissData = data.frame(swiss)
+
+```
+
+splitting data into test and train set
+
+```{r}
+set.seed(150)
+trainIndex = createDataPartition(swissData$Fertility,p=0.8,list = F)
+trainset = swissData[trainIndex,]
+testset = swissData[-trainIndex,]
+
+```
+
+fitting a linear model
+```{r}
+linearModel = lm(Fertility~.,trainset)
+
+summary(linearModel)
+
+```
+Agriculture, Examination, Catholic and Infant Mortality are relevant feature with coefficients as -0.17497, -0.05176,0.11713, 1.03247
+
+calculating test mse
+
+
+```{r}
+mean((testset$Fertility-predict(linearModel,testset))^2)
+```
+
+performing Lasso Regression
+```{r}
+
+library(Matrix)
+library(foreach)
+library(glmnet)
+
+x = model.matrix(Fertility~.,trainset)[,-1]
+
+y = trainset$Fertility
+```
+
+Cross Validation Lasso GLMNET
+```{r}
+# Setting the range of lambda values
+lambdaSeq = 10^seq(5,-5,by = -.1)
+
+# Using cross validation glmnet
+lassoCrossVal = cv.glmnet(x, y, alpha = 1,lambda = lambdaSeq)
+plot(lassoCrossVal)
+
+```
+finding optimal lambda value
+
+```{r}
+lambdaOptimal = lassoCrossVal$lambda.min
+lambdaOptimal
+
+```
+Using glmnet function to build the ridge regression model
+```{r}
+
+fit = glmnet(x, y, alpha = 1, lambda  = lambdaOptimal)
+
+summary(fit)
+
+```
+
+
+```{r}
+X =  model.matrix(Fertility~.,testset)[,-1]
+modelPredict = predict(fit,newx = X, type = "response")
+```
+
+MSE on test data
+```{r}
+
+mean((modelPredict-testset$Fertility)^2)
+```
+
+comparing coesficients of Linear model and Lasso models
+```{r}
+coef(linearModel)
+coef(lassoCrossVal)
+```
+We can clearly see that, when compared to the linear fit, our Lasso Regularization has shrunk the coefficients, and we can also see that two of them have shrunk to zero. We may conclude that the Lasso obviously conducted shrinkage and variable selection. 
+
+Problem 3:
+
+```{r}
+library(readxl)
+ConcreteData = read_excel("C:/Users/SRINU/Desktop/Spring 23/DPA/Concrete_Data.xls")
+
+summary(ConcreteData)
+```
+
+Changing the Column names
+Taking Columns first 6 columns
+
+```{r}
+colnames(ConcreteData) = c("cem", "bfs", "fa", "water", "sp", "cagg", "fagg", "age", "ccs")
+keep = c("cem", "bfs", "fa", "water", "sp", "cagg", "ccs")
+ConcreteData = ConcreteData[keep]
+summary(ConcreteData)
+```
+plotting correlation
+```{r}
+library(corrplot)
+corrplot(cor(ConcreteData), method = "number")
+```
+fitting GAM model
+```{r}
+
+library(mgcv)
+gamModel = gam(ccs ~ cem + bfs + fa + water + sp + cagg , data=ConcreteData)
+summary(gamModel)
+
+```
+It appear to have statistical effects for CEM and BFS, but not for CAGG, and the corrected R-squared shows that a significant percentage of the variation is explained.
+
+Using Smoothing Function
+```{r}
+gamModel2 = gam(ccs ~ s(cem) + s(bfs) + s(fa) + s(water) + s(sp) + s(cagg) , data=ConcreteData)
+summary(gamModel2)
+```
+
+We can also see that this model accounts for most of the variance in CCS , with an adjusted R-squared of .531 . So, it looks like the CEM is associated with CCS.
+
+
+
+```{r}
+gamModel1.sse = sum(fitted(gamModel)-ConcreteData$ccs)^2
+gamModel1.ssr = sum(fitted(gamModel) - mean(ConcreteData$ccs))^2
+gamModel1.sst = gamModel1.sse + gamModel1.ssr
+
+rsqr_main=1-(gamModel1.sse/gamModel1.sst)
+print(rsqr_main)
+```
+```{r}
+gamModel2.sse = sum(fitted(gamModel2)-ConcreteData$ccs)^2
+gamModel2.ssr = sum(fitted(gamModel2) -mean(ConcreteData$ccs))^2
+gamModel2.sst = gamModel2.sse + gamModel2.ssr
+
+rsqr_sm=1-(gamModel2.sse/gamModel2.sst)
+print(rsqr_sm)
+```
+
+
+Comparison of Model
+```{r}
+anova(gamModel, gamModel2, test="Chisq")
+
+```
+
+We couldn't have assumed as much before, but now we have more statistical data to imply that integrating nonlinear covariate connections improves the model.
+
+
+Visualizing with Visreg Library
+```{r}
+library(visreg)
+visreg(gamModel,'cem')
+visreg(gamModel2,'cem') 
+```
+The end result is a plot of the expected value of the CCS as a function of x (CEM), with all other variables in the model maintained constant.
+It contains the following elements: 
+(1) the expected value (blue line)
+(2) a confidence interval for the expected value (gray band) and 
+(3) partial residuals (dark gray dots)
+
+
+
+```{r}
+visreg(gamModel,'bfs') 
+visreg(gamModel2,'bfs') 
+```
+
+```{r}
+visreg(gamModel,'fa') 
+visreg(gamModel2,'fa')
+```
+
+```{r}
+visreg(gamModel,'water') 
+visreg(gamModel2,'water')
+```
+
+```{r}
+visreg(gamModel,'sp') 
+visreg(gamModel2,'sp')
+```
+
+
+```{r}
+visreg(gamModel,'cagg') 
+visreg(gamModel2,'cagg')
+```
+
+The CEM graph shows that the confidence interval after using the smoothing function has a higher value than the model before applying the smoothing function.

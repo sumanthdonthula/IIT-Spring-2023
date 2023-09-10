@@ -1,0 +1,1436 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{lmodern}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same} % disable monospaced font for URLs
+\hypersetup{
+  pdftitle={Assignment-03},
+  pdfauthor={Sumanth Donthula},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\title{Assignment-03}
+\author{Sumanth Donthula}
+\date{2023-03-03}
+
+\begin{document}
+\maketitle
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(tinytex)}
+\end{Highlighting}
+\end{Shaded}
+
+Recitation Exercises
+
+chapter - 6 1) a) Understanding how Best Subset and other step-wise
+selections are performed allows us to intuitively realize that the best
+subset pick will have less training RSS than the other two.
+
+The reason for this is that the Best Subset Selection approach creates
+2k models with each predictor and each subset of predictors. At each
+phase, it would choose the best model with the least amount of training
+RSS.
+
+Once we follow a step-wise (forward or backward) order (and observe just
+1+ k(k+1)/2 models), we will not evaluate additional models that may
+provide less training error.
+
+b.)
+
+It's hard to determine which of the following models gives the lowest
+test RSS because all the above techniques employ algorithms based on
+reducing training RSS to select the best models when comparing models of
+the same size. We next utilize cross validation error/Mallow's
+Cp/AIC/BIC, and so on, to choose the final model among k+1 models.
+Nevertheless, the initial decision is made with the least training error
+in mind, which does not ensure the lowest test error.
+
+c.) i) TRUE: The k-variable model has k variables ( predictors ).
+Therefore a k variable model identified by forward step-wise selection
+will undoubtedly be a subset of a (k+1) variable model identified by
+forward step-wise selection since it simply requires adding one more
+variable and employing forward step-wise selection again.
+
+\begin{enumerate}
+\def\labelenumi{\roman{enumi})}
+\setcounter{enumi}{1}
+\item
+  TRUE: The same explanation as previously applies here as well. The k
+  variable model is already included in the collection of models
+  evaluated backwards and forwards. By adding one more variable and
+  using the same procedure, predictors in the k variable model become a
+  subset of predictors in the (k+1) model.
+\item
+  FALSE: This is occasionally true, but not always. Backward
+  step-by-step examination of k predictors and formation of model, then
+  removal of one least relevant predictor and formation of model with
+  k-1 predictors, and so on. In the forward direction, we consider a
+  model that starts with one predictor and subsequently increases one
+  predictor at a time. As a result, we cannot be positive that the
+  predictors in the k= variable model identified via backward step-wise
+  selection are a subset of the predictors in the k+1 variable model.
+\item
+  FALSE: The same explanation (as given in (iii)) may be used to
+  understand why it is untrue.
+\item
+  FALSE : The predictors found by best subset selection in the
+  k-variable model are a subset of the predictors identified by best
+  subset selection in the (k + 1)-variable model.
+\end{enumerate}
+
+Because the best subset selects the best model for each k, the preceding
+assumption is false.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  a.)
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{(\roman{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  option
+\end{enumerate}
+
+We know that when the lambda value grows, several of the predictor
+coefficients in Lasso become absolutely zero, reducing the model's
+flexibility ( bias variance trade off actually take place -- meaning it
+brings substantial decrease in variance though there is a slight
+increase in bias of the model).
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{(\roman{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Option
+\end{enumerate}
+
+The same idea that we used for Lasso before applies here. The ridge
+penalty makes the model less flexible but significantly reduces
+variation. One downside of ridge regression is that it uses all
+predictors and the values of predictor coefficients reduce but do not
+reach zero as in Lasso.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{(\roman{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  option
+\end{enumerate}
+
+We know that non-linear models are more flexible, with higher variance
+and lower bias. When we consider the estimated MSE equation, which
+comprises the elements square of bias, variance, and irreducible error,
+we may intuitively conclude that the prediction accuracy of a non-linear
+model will be high when the decrease in bias is greater than the
+increase in variance.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\tightlist
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{(\roman{enumi})}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  option
+\end{enumerate}
+
+This is easily described by the contour plots of the coefficients (of
+predictors) and the value of s. ( square for Lasso ). As we do the
+lasso, we are attempting to discover the set of coefficient estimates
+that result in the minimum RSS, subject to the constraint that there is
+a maximum size s. If s is big enough, the coefficients of Lasso will be
+similar to those of Least squares. The oval shapes in the graph
+represent the same RSS at any position along the curve.
+
+In addition, the outer ellipse has more RSS than the inner ellipse.
+Therefore, when s, the constraint, climbs from 0 to some positive
+values, the square size increases and it moves towards the inner
+ellipses, implying that as s increases, the value of training RSS
+decreases and so the answer is (iv)
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{(\roman{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  option
+\end{enumerate}
+
+Except for the intercept, the only possible coefficient values for s=0
+are zeroes. That means that at s=0, we have a null model that is
+independent of all predictors. The model's flexibility grows as the
+value of s increases and approaches towards least square estimates. We
+know from our basics that when model flexibility rises, bias lowers,
+variance increases, and test MSE drops to a certain amount before
+increasing at a certain point. As a result, we picked (ii) as the best
+alternative.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  (iii)Steadily increase
+\end{enumerate}
+
+The approach used to explain question (b) may also be applied here. When
+s grows, the model's flexibility improves, and therefore the value of
+variance climbs steadily until s reaches a value where the coefficients
+match the least square estimate.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{3}
+\tightlist
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{(\roman{enumi})}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  Steadily decrease
+\end{enumerate}
+
+The same idea as above may be applied here. When s grows from 0, the
+model's flexibility improves, and so the bias decreases continuously
+until the least square estimate meets the limitations of s.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{4}
+\tightlist
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{21}
+\tightlist
+\item
+  Remains constant
+\end{enumerate}
+
+The irreducible error occurs regardless of how good the model is, and it
+is caused by noise in the system ( for not considering unknown element
+). Hence we don't notice a commensurate increase/decrease in irreducible
+error and thus the solution dependent on the model's flexibility or
+coefficient values.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{3}
+\tightlist
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\tightlist
+\item
+  (iii)Steadily increase
+\end{enumerate}
+
+It is worth noting that when \(\lambda=0\), the above equation equals
+LSE ( Least Squares Estimate ). The model developed using least squares
+coefficients yields the smallest training RSS. The level curves of
+coefficients shift away from the LSE as the value of \(\lambda\) grows.
+As a result, the training error continues to rise.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{(\roman{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  Decrease at first, then gradually increase in a U shape. To mitigate
+  the over-fitting problem that LSE generally produces, we add penalty
+  to the Least Square estimate (referred to as ridge or Lasso depending
+  on the penalty selected). When \(\lambda\) rises, the penalty
+  increases, and the model built in this manner tends to under-fit the
+  model and improve on reducing test error. Nevertheless, this cannot
+  continue indefinitely, and after a certain amount, the rise in bias
+  surpasses the decrease in variance, resulting in an increase in test
+  error.
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  (iv)Steadily decrease
+\end{enumerate}
+
+When the \(\lambda\) value grows, the coefficient value shrinks towards
+zero, making the model less flexible than the initial model. We employ
+shrinkage ideas to reduce variation as much as feasible ( till we get
+almost zero variance ). When the coefficients approach 0, the model
+approaches zero variance.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{3}
+\tightlist
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{(\roman{enumi})}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  Steadily increase
+\end{enumerate}
+
+The same intuition that was employed in the last response may be applied
+here. The model becomes less flexible as \(\lambda\) grows, and
+variation tends to diminish. When the value of \(\lambda\) increases,
+the bias tends to rise as the coefficients go to zero.
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{4}
+\tightlist
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{(\alph{enumi})}
+\setcounter{enumi}{21}
+\tightlist
+\item
+  Remains constant
+\end{enumerate}
+
+Irreducible error is unaffected by the coefficients or penalty amount
+employed in the preceding equation. It arises as a result of system
+noise and is hence unrelated to the value of \(\lambda\). As a result,
+the solution.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{4}
+\tightlist
+\item
+  Hand written and attached separately.
+\end{enumerate}
+
+Chapter - 7
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi})}
+\setcounter{enumi}{1}
+\tightlist
+\item
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\tightlist
+\item
+\end{enumerate}
+
+The idea that \(∫[g^{(m)}(x)]^2 dx\) is a summation of
+\([g^{(m)}(x)]^2\) throughout the range of x, thus \(ĝ\) will be the g
+that minimizes We can understand why large \(\lambda\) values drive the
+penalty term \(\lambda∫[g^{(m)}(x)]^2dx\) towards zero. At the opposite
+extreme, a \(\lambda= 0\) eliminates this factor altogether from the
+equation, leaving us free to select any g that minimizes the loss
+function \(\sum n_i= 1(y_i−g(x_i))^2\)
+
+\begin{enumerate}
+\def\labelenumi{\alph{enumi})}
+\setcounter{enumi}{1}
+\item
+  In this case ,as \(\lambda=\infty\), \(g^!(x)\) tends to zero and it
+  is possible when g(x)is some constant c.~Therefore \(\hat{g}(x)=c\) (
+  some constant ).( So g(x) will be a straight line drawn parallel to
+  X-axis ) The value of constant c, which minimizes RSS is
+  \(c = \frac{1}{n}\sum_{i=1}^{n} y_i\)
+\item
+  As \(\lambda =\infty\), it forces the 2nd derivative of g(x) to zero,
+  i.e., \(g^{!!}(x)= 0\). This is feasible if g(x) is a linear equation
+  of the type g(x) = ax+b, and this is the line obtained by least
+  squares since it has the smallest RSS (albeit for all linear
+  equations, the second derivative is zero).
+\item
+\end{enumerate}
+
+Using the same idea as before, we may assert that \(\lambda=\infty\),
+\(g^{!!!}(x)=0\) and hence \(\hat{g}(x)\) will be a quadratic of the
+form ax2+bx+c obtained from least squares ( as it will have minimum RSS)
+
+e.) From the equation \(\hat{g}\) given in the question, We can see that
+as \(\lambda=0\), the penalty term becomes zero and just the loss term
+remains. Therefore, in order to reduce RSS to zero, g(x) can adopt any
+shape that passes through all points in the training data and can be too
+flexible or over-fitting.
+
+3.) Let \(Y =β_0 +β_1b_1(X)+β_2b_2(X)+ε\) be Equation 1
+
+Let us find the equations when X\textless1 and X\textgreater=1
+separately. We get two different functions.
+
+Applying all the given data into Equation 1 when When X\textless1:
+\(\hat{y} = 1+X\) -\textgreater{} Let this be equation 2
+
+When X\textgreater=1: \(\hat{y}= 1 + X - 2(X-1)^2\)
+=\textgreater{}\(\hat{Y} = 1+ X- 2X^2 + 4X – 2\)
+=\textgreater{}\(\hat{y} = -2X^2+5X-1\) -\textgreater{} let this be
+ation 3
+
+Therefore the curve will be a straight line from X=-2 to X=1 and then a
+quadratic curve from X=1 to X=2 in the region between X=-2 and X=2. The
+critical point is obtained by calculating the first order derivative of
+Eq3 and equating the result to zero.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{x }\OtherTok{=} \SpecialCharTok{{-}}\DecValTok{2}\SpecialCharTok{:}\DecValTok{2}
+\NormalTok{y }\OtherTok{=} \DecValTok{1} \SpecialCharTok{+}\NormalTok{ x }\SpecialCharTok{+} \SpecialCharTok{{-}}\DecValTok{2} \SpecialCharTok{*}\NormalTok{ (x}\DecValTok{{-}1}\NormalTok{)}\SpecialCharTok{\^{}}\DecValTok{2} \SpecialCharTok{*} \FunctionTok{I}\NormalTok{(x}\SpecialCharTok{\textgreater{}}\DecValTok{1}\NormalTok{)}
+\FunctionTok{plot}\NormalTok{(x, y)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-2-1.pdf}
+
+4.) Let us substitute all of the supplied values for the regions in the
+above equation of y.
+
+-2 \textless{} X \textless{} 0: \(\hat{y}= 1\) ;
+
+0 ≤ X \textless{} 1: \(\hat{y} = 2\)
+
+1 ≤ X ≤ 2: \(\hat{y} = 2-X+1 = 3-X\)
+
+The asked is just for the region between X=-2 and X=2, therefore we need
+not check what the equation would be for X\textgreater2. So,
+
+for -2≤ X \textless{} 0, the slope is zero and intercept is 1
+
+for 0 ≤ X \textless{} 1, the slope is zero and intercept is 2
+
+For 1 ≤ X ≤ 2, the slope is -1 and intercept is 3
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{x }\OtherTok{=} \SpecialCharTok{{-}}\DecValTok{2}\SpecialCharTok{:}\DecValTok{2}
+\NormalTok{y }\OtherTok{=} \FunctionTok{c}\NormalTok{(}\DecValTok{1} \SpecialCharTok{+} \DecValTok{0} \SpecialCharTok{+} \DecValTok{0}\NormalTok{, }\CommentTok{\# x = {-}2}
+      \DecValTok{1} \SpecialCharTok{+} \DecValTok{0} \SpecialCharTok{+} \DecValTok{0}\NormalTok{, }\CommentTok{\# x = {-}1}
+      \DecValTok{1} \SpecialCharTok{+} \DecValTok{1} \SpecialCharTok{+} \DecValTok{0}\NormalTok{, }\CommentTok{\# x = 0}
+      \DecValTok{1} \SpecialCharTok{+}\NormalTok{ (}\DecValTok{1{-}0}\NormalTok{) }\SpecialCharTok{+} \DecValTok{0}\NormalTok{, }\CommentTok{\# x = 1}
+      \DecValTok{1} \SpecialCharTok{+}\NormalTok{ (}\DecValTok{1{-}1}\NormalTok{) }\SpecialCharTok{+} \DecValTok{0} \CommentTok{\# x =2}
+\NormalTok{      )}
+\FunctionTok{plot}\NormalTok{(x,y)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-3-1.pdf}
+
+5.) a.) The above equations clearly show that when the value of
+\(\lambda\) approaches infinity, the penalty term becomes increasingly
+relevant.
+
+When \(\lambda → \infty\), for \(\hat{g}_1\) , \(\hat{g}_3\) (x) → 0,
+This indicates that the highest order polynomial that meets this
+condition will be of the form g(x) = ax2 + bx + c.~( because the 3rd
+order derivative is zero). As a result, g\^{}1 will be a quadratic that
+reduces training RSS.
+
+When \(\lambda → \infty\), for \(\hat{g}_2\) , \(\hat{g}_4\) (x) → 0,
+This indicates that the highest order polynomial that meets this
+condition will be of the type g(x) = ax3 + bx2 + cx + d ( because the
+4th order derivative is zero). As a result, g\^{}2 will be a cubic that
+reduces training RSS.
+
+As \(\hat{g}_2\) is more flexible compared to \(\hat{g}_1\),
+\(\hat{g}_2\) will have less RSS compared to \(\hat{g}_1\) for a given
+high value of RSS.
+
+b.) We cant say which of the above have smaller test RSS. It solely
+depends on the true relationship of the predictors and the order of such
+relationship. Based on the true relation, \(\hat{g}_1\) can be under-fit
+and \(\hat{g}_2\) can be over-fit. So we can say for sure if
+\(\hat{g}_1\) or \(\hat{g}_2\) have the small test RSS.
+
+c.) \(\lambda=0\) implies the penalty term totally becomes zero. And
+that means both \(\hat{g}_1\) and \(\hat{g}_2\) would have the same
+training RSS (of zero if all the xi are unique). We may just have any
+function that interpolates all of the training observations with no
+limitations on g.
+
+In terms of test RSS, we cannot be certain of having a low test RSS
+since a model that covers all training points and has a training RSS of
+zero would be horribly over-fit and have a high test RSS. Assume that
+the same interpolating function was used for both \(\hat{g}_1\) \&
+\(\hat{g}_1\) (e.g.~Both would have the same test RSS if they were a
+linear spline with knots at each unique xi).
+
+Practicum Problems
+
+Problem 1
+
+Loading the mtcars data frame
+
+\begin{verbatim}
+##       mpg             cyl             disp             hp       
+##  Min.   :10.40   Min.   :4.000   Min.   : 71.1   Min.   : 52.0  
+##  1st Qu.:15.43   1st Qu.:4.000   1st Qu.:120.8   1st Qu.: 96.5  
+##  Median :19.20   Median :6.000   Median :196.3   Median :123.0  
+##  Mean   :20.09   Mean   :6.188   Mean   :230.7   Mean   :146.7  
+##  3rd Qu.:22.80   3rd Qu.:8.000   3rd Qu.:326.0   3rd Qu.:180.0  
+##  Max.   :33.90   Max.   :8.000   Max.   :472.0   Max.   :335.0  
+##       drat             wt             qsec             vs        
+##  Min.   :2.760   Min.   :1.513   Min.   :14.50   Min.   :0.0000  
+##  1st Qu.:3.080   1st Qu.:2.581   1st Qu.:16.89   1st Qu.:0.0000  
+##  Median :3.695   Median :3.325   Median :17.71   Median :0.0000  
+##  Mean   :3.597   Mean   :3.217   Mean   :17.85   Mean   :0.4375  
+##  3rd Qu.:3.920   3rd Qu.:3.610   3rd Qu.:18.90   3rd Qu.:1.0000  
+##  Max.   :4.930   Max.   :5.424   Max.   :22.90   Max.   :1.0000  
+##        am              gear            carb      
+##  Min.   :0.0000   Min.   :3.000   Min.   :1.000  
+##  1st Qu.:0.0000   1st Qu.:3.000   1st Qu.:2.000  
+##  Median :0.0000   Median :4.000   Median :2.000  
+##  Mean   :0.4062   Mean   :3.688   Mean   :2.812  
+##  3rd Qu.:1.0000   3rd Qu.:4.000   3rd Qu.:4.000  
+##  Max.   :1.0000   Max.   :5.000   Max.   :8.000
+\end{verbatim}
+
+performing test/train split
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(caret)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: ggplot2
+\end{verbatim}
+
+\begin{verbatim}
+## Loading required package: lattice
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{0}\NormalTok{)}
+
+\NormalTok{trainIndex }\OtherTok{=} \FunctionTok{createDataPartition}\NormalTok{(mtcars}\SpecialCharTok{$}\NormalTok{am,}\AttributeTok{times=}\DecValTok{1}\NormalTok{,}\AttributeTok{p=}\FloatTok{0.8}\NormalTok{,}\AttributeTok{list =}\NormalTok{ F)}
+\NormalTok{trainset }\OtherTok{=}\NormalTok{ mtcars[trainIndex,]}
+\NormalTok{testset }\OtherTok{=}\NormalTok{ mtcars[}\SpecialCharTok{{-}}\NormalTok{trainIndex,]}
+\end{Highlighting}
+\end{Shaded}
+
+fitting a linear model and displaying coef values, mean squared error of
+Linear Model
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{linearModel }\OtherTok{=} \FunctionTok{lm}\NormalTok{(mpg}\SpecialCharTok{\textasciitilde{}}\NormalTok{.,}\AttributeTok{data=}\NormalTok{trainset)}
+
+\FunctionTok{mean}\NormalTok{((}\FunctionTok{predict}\NormalTok{(linearModel,testset)}\SpecialCharTok{{-}}\NormalTok{testset}\SpecialCharTok{$}\NormalTok{mpg)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 20.01153
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(linearModel)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = mpg ~ ., data = trainset)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -3.8257 -0.8323  0.0080  1.0310  3.3446 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(>|t|)  
+## (Intercept) 27.975931  18.508625   1.512   0.1514  
+## cyl         -0.463054   1.087553  -0.426   0.6763  
+## disp         0.007147   0.016278   0.439   0.6669  
+## hp          -0.015572   0.023256  -0.670   0.5133  
+## drat         0.043647   1.958208   0.022   0.9825  
+## wt          -3.841354   1.998665  -1.922   0.0738 .
+## qsec         0.514469   0.716008   0.719   0.4835  
+## vs           0.724096   1.988433   0.364   0.7208  
+## am           1.903646   2.082678   0.914   0.3752  
+## gear        -0.046622   1.463656  -0.032   0.9750  
+## carb        -0.788125   0.945297  -0.834   0.4175  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.338 on 15 degrees of freedom
+## Multiple R-squared:  0.9223, Adjusted R-squared:  0.8704 
+## F-statistic:  17.8 on 10 and 15 DF,  p-value: 1.464e-06
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{coef}\NormalTok{(linearModel)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  (Intercept)          cyl         disp           hp         drat           wt 
+## 27.975931216 -0.463053862  0.007147382 -0.015572021  0.043646659 -3.841354354 
+##         qsec           vs           am         gear         carb 
+##  0.514468609  0.724096147  1.903646030 -0.046621655 -0.788124585
+\end{verbatim}
+
+performing ridge regression initializing lambda and plotting MSE vs
+\(\lambda\)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{x }\OtherTok{=} \FunctionTok{model.matrix}\NormalTok{(mpg}\SpecialCharTok{\textasciitilde{}}\NormalTok{.,trainset)[,}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]}
+
+\NormalTok{y }\OtherTok{=}\NormalTok{ trainset}\SpecialCharTok{$}\NormalTok{mpg}
+
+\FunctionTok{library}\NormalTok{(glmnet)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: Matrix
+\end{verbatim}
+
+\begin{verbatim}
+## Loaded glmnet 4.1-6
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lambdaSeq}\OtherTok{=}\DecValTok{10}\SpecialCharTok{\^{}}\FunctionTok{seq}\NormalTok{(}\DecValTok{5}\NormalTok{,}\SpecialCharTok{{-}}\DecValTok{5}\NormalTok{,}\AttributeTok{by =} \SpecialCharTok{{-}}\NormalTok{.}\DecValTok{1}\NormalTok{)}
+
+
+\NormalTok{ridgeCrossVal }\OtherTok{=} \FunctionTok{cv.glmnet}\NormalTok{(x, y, }\AttributeTok{alpha =} \DecValTok{0}\NormalTok{,}\AttributeTok{lambda =}\NormalTok{ lambdaSeq)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning: Option grouped=FALSE enforced in cv.glmnet, since < 3 observations per
+## fold
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{plot}\NormalTok{(ridgeCrossVal)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-6-1.pdf}
+
+finding optimal lambda
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\#Finding the best lambda value:}
+\NormalTok{lambdaOptimal }\OtherTok{=}\NormalTok{ ridgeCrossVal}\SpecialCharTok{$}\NormalTok{lambda.min}
+\FunctionTok{print}\NormalTok{(lambdaOptimal)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 1.995262
+\end{verbatim}
+
+Building a Ridge Regression Model using GLMNET
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{ridgeModel }\OtherTok{=} \FunctionTok{glmnet}\NormalTok{(x, y, }\AttributeTok{alpha =} \DecValTok{0}\NormalTok{, }\AttributeTok{lambda  =}\NormalTok{ lambdaOptimal)}
+\end{Highlighting}
+\end{Shaded}
+
+Model Summary
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{summary}\NormalTok{(ridgeModel)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           Length Class     Mode   
+## a0         1     -none-    numeric
+## beta      10     dgCMatrix S4     
+## df         1     -none-    numeric
+## dim        2     -none-    numeric
+## lambda     1     -none-    numeric
+## dev.ratio  1     -none-    numeric
+## nulldev    1     -none-    numeric
+## npasses    1     -none-    numeric
+## jerr       1     -none-    numeric
+## offset     1     -none-    logical
+## call       5     -none-    call   
+## nobs       1     -none-    numeric
+\end{verbatim}
+
+displaying coef values
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{coef}\NormalTok{(ridgeCrossVal,}\AttributeTok{s=}\StringTok{"lambda.min"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 11 x 1 sparse Matrix of class "dgCMatrix"
+##                       s1
+## (Intercept) 26.924970803
+## cyl         -0.377105798
+## disp        -0.005679121
+## hp          -0.013252204
+## drat         0.707244544
+## wt          -1.526324786
+## qsec         0.120147827
+## vs           0.931779218
+## am           1.659858645
+## gear         0.372245497
+## carb        -1.204900675
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{X }\OtherTok{=}  \FunctionTok{model.matrix}\NormalTok{(mpg}\SpecialCharTok{\textasciitilde{}}\NormalTok{.,testset)[,}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]}
+\NormalTok{modelPredict }\OtherTok{=} \FunctionTok{predict}\NormalTok{(ridgeModel,}\AttributeTok{s =}\NormalTok{,}\AttributeTok{newx =}\NormalTok{ X, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)}
+
+\FunctionTok{mean}\NormalTok{((modelPredict}\SpecialCharTok{{-}}\NormalTok{testset}\SpecialCharTok{$}\NormalTok{mpg)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 15.83657
+\end{verbatim}
+
+We can observe that doing Ridge Regression reduces MSE on test data from
+10.71 to 1.18. The shift in coefficients is visible after doing Ridge
+Regression. The coefficients have decreased and become closer to zero,
+but none are precisely zero. As a result, we may argue that Ridge
+regression conducted shrinkage but not variable selection.
+
+Problem 2:
+
+Loading libraries and data set
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(ggplot2)}
+\FunctionTok{library}\NormalTok{(lattice)}
+\FunctionTok{library}\NormalTok{(caret)}
+
+\NormalTok{swissData }\OtherTok{=} \FunctionTok{data.frame}\NormalTok{(swiss)}
+\end{Highlighting}
+\end{Shaded}
+
+splitting data into test and train set
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{set.seed}\NormalTok{(}\DecValTok{150}\NormalTok{)}
+\NormalTok{trainIndex }\OtherTok{=} \FunctionTok{createDataPartition}\NormalTok{(swissData}\SpecialCharTok{$}\NormalTok{Fertility,}\AttributeTok{p=}\FloatTok{0.8}\NormalTok{,}\AttributeTok{list =}\NormalTok{ F)}
+\NormalTok{trainset }\OtherTok{=}\NormalTok{ swissData[trainIndex,]}
+\NormalTok{testset }\OtherTok{=}\NormalTok{ swissData[}\SpecialCharTok{{-}}\NormalTok{trainIndex,]}
+\end{Highlighting}
+\end{Shaded}
+
+fitting a linear model
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{linearModel }\OtherTok{=} \FunctionTok{lm}\NormalTok{(Fertility}\SpecialCharTok{\textasciitilde{}}\NormalTok{.,trainset)}
+
+\FunctionTok{summary}\NormalTok{(linearModel)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Call:
+## lm(formula = Fertility ~ ., data = trainset)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -14.014  -5.942   1.329   3.491  15.717 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)      66.16966   11.76082   5.626 2.90e-06 ***
+## Agriculture      -0.17497    0.07982  -2.192  0.03552 *  
+## Examination      -0.05176    0.29772  -0.174  0.86303    
+## Education        -1.06932    0.23606  -4.530 7.32e-05 ***
+## Catholic          0.11713    0.03946   2.969  0.00554 ** 
+## Infant.Mortality  1.03247    0.41295   2.500  0.01756 *  
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 7.167 on 33 degrees of freedom
+## Multiple R-squared:  0.6893, Adjusted R-squared:  0.6422 
+## F-statistic: 14.64 on 5 and 33 DF,  p-value: 1.406e-07
+\end{verbatim}
+
+Agriculture, Examination, Catholic and Infant Mortality are relevant
+feature with coefficients as -0.17497, -0.05176,0.11713, 1.03247
+
+calculating test mse
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{mean}\NormalTok{((testset}\SpecialCharTok{$}\NormalTok{Fertility}\SpecialCharTok{{-}}\FunctionTok{predict}\NormalTok{(linearModel,testset))}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 59.91027
+\end{verbatim}
+
+performing Lasso Regression
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(Matrix)}
+\FunctionTok{library}\NormalTok{(foreach)}
+\FunctionTok{library}\NormalTok{(glmnet)}
+
+\NormalTok{x }\OtherTok{=} \FunctionTok{model.matrix}\NormalTok{(Fertility}\SpecialCharTok{\textasciitilde{}}\NormalTok{.,trainset)[,}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]}
+
+\NormalTok{y }\OtherTok{=}\NormalTok{ trainset}\SpecialCharTok{$}\NormalTok{Fertility}
+\end{Highlighting}
+\end{Shaded}
+
+Cross Validation Lasso GLMNET
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{\# Setting the range of lambda values}
+\NormalTok{lambdaSeq }\OtherTok{=} \DecValTok{10}\SpecialCharTok{\^{}}\FunctionTok{seq}\NormalTok{(}\DecValTok{5}\NormalTok{,}\SpecialCharTok{{-}}\DecValTok{5}\NormalTok{,}\AttributeTok{by =} \SpecialCharTok{{-}}\NormalTok{.}\DecValTok{1}\NormalTok{)}
+
+\CommentTok{\# Using cross validation glmnet}
+\NormalTok{lassoCrossVal }\OtherTok{=} \FunctionTok{cv.glmnet}\NormalTok{(x, y, }\AttributeTok{alpha =} \DecValTok{1}\NormalTok{,}\AttributeTok{lambda =}\NormalTok{ lambdaSeq)}
+\FunctionTok{plot}\NormalTok{(lassoCrossVal)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-17-1.pdf}
+finding optimal lambda value
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{lambdaOptimal }\OtherTok{=}\NormalTok{ lassoCrossVal}\SpecialCharTok{$}\NormalTok{lambda.min}
+\NormalTok{lambdaOptimal}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.2511886
+\end{verbatim}
+
+Using glmnet function to build the ridge regression model
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{fit }\OtherTok{=} \FunctionTok{glmnet}\NormalTok{(x, y, }\AttributeTok{alpha =} \DecValTok{1}\NormalTok{, }\AttributeTok{lambda  =}\NormalTok{ lambdaOptimal)}
+
+\FunctionTok{summary}\NormalTok{(fit)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##           Length Class     Mode   
+## a0        1      -none-    numeric
+## beta      5      dgCMatrix S4     
+## df        1      -none-    numeric
+## dim       2      -none-    numeric
+## lambda    1      -none-    numeric
+## dev.ratio 1      -none-    numeric
+## nulldev   1      -none-    numeric
+## npasses   1      -none-    numeric
+## jerr      1      -none-    numeric
+## offset    1      -none-    logical
+## call      5      -none-    call   
+## nobs      1      -none-    numeric
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{X }\OtherTok{=}  \FunctionTok{model.matrix}\NormalTok{(Fertility}\SpecialCharTok{\textasciitilde{}}\NormalTok{.,testset)[,}\SpecialCharTok{{-}}\DecValTok{1}\NormalTok{]}
+\NormalTok{modelPredict }\OtherTok{=} \FunctionTok{predict}\NormalTok{(fit,}\AttributeTok{newx =}\NormalTok{ X, }\AttributeTok{type =} \StringTok{"response"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+MSE on test data
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{mean}\NormalTok{((modelPredict}\SpecialCharTok{{-}}\NormalTok{testset}\SpecialCharTok{$}\NormalTok{Fertility)}\SpecialCharTok{\^{}}\DecValTok{2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 57.83554
+\end{verbatim}
+
+comparing coesficients of Linear model and Lasso models
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{coef}\NormalTok{(linearModel)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##      (Intercept)      Agriculture      Examination        Education 
+##      66.16965921      -0.17497395      -0.05176448      -1.06932048 
+##         Catholic Infant.Mortality 
+##       0.11713319       1.03247401
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{coef}\NormalTok{(lassoCrossVal)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 6 x 1 sparse Matrix of class "dgCMatrix"
+##                           s1
+## (Intercept)      60.59242105
+## Agriculture       .         
+## Examination       .         
+## Education        -0.62205775
+## Catholic          0.06463855
+## Infant.Mortality  0.69070657
+\end{verbatim}
+
+We can clearly see that, when compared to the linear fit, our Lasso
+Regularization has shrunk the coefficients, and we can also see that two
+of them have shrunk to zero. We may conclude that the Lasso obviously
+conducted shrinkage and variable selection.
+
+Problem 3:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(readxl)}
+\NormalTok{ConcreteData }\OtherTok{=} \FunctionTok{read\_excel}\NormalTok{(}\StringTok{"C:/Users/SRINU/Desktop/Spring 23/DPA/Concrete\_Data.xls"}\NormalTok{)}
+
+\FunctionTok{summary}\NormalTok{(ConcreteData)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  Cement (component 1)(kg in a m^3 mixture)
+##  Min.   :102.0                            
+##  1st Qu.:192.4                            
+##  Median :272.9                            
+##  Mean   :281.2                            
+##  3rd Qu.:350.0                            
+##  Max.   :540.0                            
+##  Blast Furnace Slag (component 2)(kg in a m^3 mixture)
+##  Min.   :  0.0                                        
+##  1st Qu.:  0.0                                        
+##  Median : 22.0                                        
+##  Mean   : 73.9                                        
+##  3rd Qu.:142.9                                        
+##  Max.   :359.4                                        
+##  Fly Ash (component 3)(kg in a m^3 mixture)
+##  Min.   :  0.00                            
+##  1st Qu.:  0.00                            
+##  Median :  0.00                            
+##  Mean   : 54.19                            
+##  3rd Qu.:118.27                            
+##  Max.   :200.10                            
+##  Water  (component 4)(kg in a m^3 mixture)
+##  Min.   :121.8                            
+##  1st Qu.:164.9                            
+##  Median :185.0                            
+##  Mean   :181.6                            
+##  3rd Qu.:192.0                            
+##  Max.   :247.0                            
+##  Superplasticizer (component 5)(kg in a m^3 mixture)
+##  Min.   : 0.000                                     
+##  1st Qu.: 0.000                                     
+##  Median : 6.350                                     
+##  Mean   : 6.203                                     
+##  3rd Qu.:10.160                                     
+##  Max.   :32.200                                     
+##  Coarse Aggregate  (component 6)(kg in a m^3 mixture)
+##  Min.   : 801.0                                      
+##  1st Qu.: 932.0                                      
+##  Median : 968.0                                      
+##  Mean   : 972.9                                      
+##  3rd Qu.:1029.4                                      
+##  Max.   :1145.0                                      
+##  Fine Aggregate (component 7)(kg in a m^3 mixture)   Age (day)     
+##  Min.   :594.0                                     Min.   :  1.00  
+##  1st Qu.:731.0                                     1st Qu.:  7.00  
+##  Median :779.5                                     Median : 28.00  
+##  Mean   :773.6                                     Mean   : 45.66  
+##  3rd Qu.:824.0                                     3rd Qu.: 56.00  
+##  Max.   :992.6                                     Max.   :365.00  
+##  Concrete compressive strength(MPa, megapascals)
+##  Min.   : 2.332                                 
+##  1st Qu.:23.707                                 
+##  Median :34.443                                 
+##  Mean   :35.818                                 
+##  3rd Qu.:46.136                                 
+##  Max.   :82.599
+\end{verbatim}
+
+Changing the Column names Taking Columns first 6 columns
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{colnames}\NormalTok{(ConcreteData) }\OtherTok{=} \FunctionTok{c}\NormalTok{(}\StringTok{"cem"}\NormalTok{, }\StringTok{"bfs"}\NormalTok{, }\StringTok{"fa"}\NormalTok{, }\StringTok{"water"}\NormalTok{, }\StringTok{"sp"}\NormalTok{, }\StringTok{"cagg"}\NormalTok{, }\StringTok{"fagg"}\NormalTok{, }\StringTok{"age"}\NormalTok{, }\StringTok{"ccs"}\NormalTok{)}
+\NormalTok{keep }\OtherTok{=} \FunctionTok{c}\NormalTok{(}\StringTok{"cem"}\NormalTok{, }\StringTok{"bfs"}\NormalTok{, }\StringTok{"fa"}\NormalTok{, }\StringTok{"water"}\NormalTok{, }\StringTok{"sp"}\NormalTok{, }\StringTok{"cagg"}\NormalTok{, }\StringTok{"ccs"}\NormalTok{)}
+\NormalTok{ConcreteData }\OtherTok{=}\NormalTok{ ConcreteData[keep]}
+\FunctionTok{summary}\NormalTok{(ConcreteData)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##       cem             bfs              fa             water      
+##  Min.   :102.0   Min.   :  0.0   Min.   :  0.00   Min.   :121.8  
+##  1st Qu.:192.4   1st Qu.:  0.0   1st Qu.:  0.00   1st Qu.:164.9  
+##  Median :272.9   Median : 22.0   Median :  0.00   Median :185.0  
+##  Mean   :281.2   Mean   : 73.9   Mean   : 54.19   Mean   :181.6  
+##  3rd Qu.:350.0   3rd Qu.:142.9   3rd Qu.:118.27   3rd Qu.:192.0  
+##  Max.   :540.0   Max.   :359.4   Max.   :200.10   Max.   :247.0  
+##        sp              cagg             ccs        
+##  Min.   : 0.000   Min.   : 801.0   Min.   : 2.332  
+##  1st Qu.: 0.000   1st Qu.: 932.0   1st Qu.:23.707  
+##  Median : 6.350   Median : 968.0   Median :34.443  
+##  Mean   : 6.203   Mean   : 972.9   Mean   :35.818  
+##  3rd Qu.:10.160   3rd Qu.:1029.4   3rd Qu.:46.136  
+##  Max.   :32.200   Max.   :1145.0   Max.   :82.599
+\end{verbatim}
+
+plotting correlation
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(corrplot)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## corrplot 0.92 loaded
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{corrplot}\NormalTok{(}\FunctionTok{cor}\NormalTok{(ConcreteData), }\AttributeTok{method =} \StringTok{"number"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-25-1.pdf}
+fitting GAM model
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(mgcv)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Loading required package: nlme
+\end{verbatim}
+
+\begin{verbatim}
+## This is mgcv 1.8-41. For overview type 'help("mgcv-package")'.
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gamModel }\OtherTok{=} \FunctionTok{gam}\NormalTok{(ccs }\SpecialCharTok{\textasciitilde{}}\NormalTok{ cem }\SpecialCharTok{+}\NormalTok{ bfs }\SpecialCharTok{+}\NormalTok{ fa }\SpecialCharTok{+}\NormalTok{ water }\SpecialCharTok{+}\NormalTok{ sp }\SpecialCharTok{+}\NormalTok{ cagg , }\AttributeTok{data=}\NormalTok{ConcreteData)}
+\FunctionTok{summary}\NormalTok{(gamModel)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## ccs ~ cem + bfs + fa + water + sp + cagg
+## 
+## Parametric coefficients:
+##              Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  5.326997  10.510518   0.507 0.612387    
+## cem          0.108256   0.005214  20.761  < 2e-16 ***
+## bfs          0.079357   0.006193  12.814  < 2e-16 ***
+## fa           0.055928   0.009287   6.022  2.4e-09 ***
+## water       -0.103871   0.027796  -3.737 0.000197 ***
+## sp           0.356016   0.110251   3.229 0.001281 ** 
+## cagg         0.008027   0.006272   1.280 0.200940    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## 
+## R-sq.(adj) =  0.445   Deviance explained = 44.9%
+## GCV = 155.83  Scale est. = 154.77    n = 1030
+\end{verbatim}
+
+It appear to have statistical effects for CEM and BFS, but not for CAGG,
+and the corrected R-squared shows that a significant percentage of the
+variation is explained.
+
+Using Smoothing Function
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gamModel2 }\OtherTok{=} \FunctionTok{gam}\NormalTok{(ccs }\SpecialCharTok{\textasciitilde{}} \FunctionTok{s}\NormalTok{(cem) }\SpecialCharTok{+} \FunctionTok{s}\NormalTok{(bfs) }\SpecialCharTok{+} \FunctionTok{s}\NormalTok{(fa) }\SpecialCharTok{+} \FunctionTok{s}\NormalTok{(water) }\SpecialCharTok{+} \FunctionTok{s}\NormalTok{(sp) }\SpecialCharTok{+} \FunctionTok{s}\NormalTok{(cagg) , }\AttributeTok{data=}\NormalTok{ConcreteData)}
+\FunctionTok{summary}\NormalTok{(gamModel2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## 
+## Family: gaussian 
+## Link function: identity 
+## 
+## Formula:
+## ccs ~ s(cem) + s(bfs) + s(fa) + s(water) + s(sp) + s(cagg)
+## 
+## Parametric coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  35.8178     0.3566   100.4   <2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Approximate significance of smooth terms:
+##            edf Ref.df      F  p-value    
+## s(cem)   4.464  5.513 69.530  < 2e-16 ***
+## s(bfs)   2.088  2.578 48.091  < 2e-16 ***
+## s(fa)    5.332  6.404  1.784    0.101    
+## s(water) 8.567  8.936 13.504  < 2e-16 ***
+## s(sp)    7.133  8.143  5.498 1.22e-06 ***
+## s(cagg)  1.000  1.000  0.018    0.892    
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## R-sq.(adj) =  0.531   Deviance explained = 54.4%
+## GCV = 134.84  Scale est. = 130.96    n = 1030
+\end{verbatim}
+
+We can also see that this model accounts for most of the variance in CCS
+, with an adjusted R-squared of .531 . So, it looks like the CEM is
+associated with CCS.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gamModel1.sse }\OtherTok{=} \FunctionTok{sum}\NormalTok{(}\FunctionTok{fitted}\NormalTok{(gamModel)}\SpecialCharTok{{-}}\NormalTok{ConcreteData}\SpecialCharTok{$}\NormalTok{ccs)}\SpecialCharTok{\^{}}\DecValTok{2}
+\NormalTok{gamModel1.ssr }\OtherTok{=} \FunctionTok{sum}\NormalTok{(}\FunctionTok{fitted}\NormalTok{(gamModel) }\SpecialCharTok{{-}} \FunctionTok{mean}\NormalTok{(ConcreteData}\SpecialCharTok{$}\NormalTok{ccs))}\SpecialCharTok{\^{}}\DecValTok{2}
+\NormalTok{gamModel1.sst }\OtherTok{=}\NormalTok{ gamModel1.sse }\SpecialCharTok{+}\NormalTok{ gamModel1.ssr}
+
+\NormalTok{rsqr\_main}\OtherTok{=}\DecValTok{1}\SpecialCharTok{{-}}\NormalTok{(gamModel1.sse}\SpecialCharTok{/}\NormalTok{gamModel1.sst)}
+\FunctionTok{print}\NormalTok{(rsqr\_main)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.4967177
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{gamModel2.sse }\OtherTok{=} \FunctionTok{sum}\NormalTok{(}\FunctionTok{fitted}\NormalTok{(gamModel2)}\SpecialCharTok{{-}}\NormalTok{ConcreteData}\SpecialCharTok{$}\NormalTok{ccs)}\SpecialCharTok{\^{}}\DecValTok{2}
+\NormalTok{gamModel2.ssr }\OtherTok{=} \FunctionTok{sum}\NormalTok{(}\FunctionTok{fitted}\NormalTok{(gamModel2) }\SpecialCharTok{{-}}\FunctionTok{mean}\NormalTok{(ConcreteData}\SpecialCharTok{$}\NormalTok{ccs))}\SpecialCharTok{\^{}}\DecValTok{2}
+\NormalTok{gamModel2.sst }\OtherTok{=}\NormalTok{ gamModel2.sse }\SpecialCharTok{+}\NormalTok{ gamModel2.ssr}
+
+\NormalTok{rsqr\_sm}\OtherTok{=}\DecValTok{1}\SpecialCharTok{{-}}\NormalTok{(gamModel2.sse}\SpecialCharTok{/}\NormalTok{gamModel2.sst)}
+\FunctionTok{print}\NormalTok{(rsqr\_sm)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.5000744
+\end{verbatim}
+
+Comparison of Model
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{anova}\NormalTok{(gamModel, gamModel2, }\AttributeTok{test=}\StringTok{"Chisq"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Analysis of Deviance Table
+## 
+## Model 1: ccs ~ cem + bfs + fa + water + sp + cagg
+## Model 2: ccs ~ s(cem) + s(bfs) + s(fa) + s(water) + s(sp) + s(cagg)
+##   Resid. Df Resid. Dev     Df Deviance  Pr(>Chi)    
+## 1   1023.00     158334                              
+## 2    996.43     131019 26.574    27315 < 2.2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+\end{verbatim}
+
+We couldn't have assumed as much before, but now we have more
+statistical data to imply that integrating nonlinear covariate
+connections improves the model.
+
+Visualizing with Visreg Library
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{library}\NormalTok{(visreg)}
+\FunctionTok{visreg}\NormalTok{(gamModel,}\StringTok{\textquotesingle{}cem\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-31-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{visreg}\NormalTok{(gamModel2,}\StringTok{\textquotesingle{}cem\textquotesingle{}}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-31-2.pdf}
+The end result is a plot of the expected value of the CCS as a function
+of x (CEM), with all other variables in the model maintained constant.
+It contains the following elements: (1) the expected value (blue line)
+(2) a confidence interval for the expected value (gray band) and (3)
+partial residuals (dark gray dots)
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{visreg}\NormalTok{(gamModel,}\StringTok{\textquotesingle{}bfs\textquotesingle{}}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-32-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{visreg}\NormalTok{(gamModel2,}\StringTok{\textquotesingle{}bfs\textquotesingle{}}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-32-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{visreg}\NormalTok{(gamModel,}\StringTok{\textquotesingle{}fa\textquotesingle{}}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-33-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{visreg}\NormalTok{(gamModel2,}\StringTok{\textquotesingle{}fa\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-33-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{visreg}\NormalTok{(gamModel,}\StringTok{\textquotesingle{}water\textquotesingle{}}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-34-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{visreg}\NormalTok{(gamModel2,}\StringTok{\textquotesingle{}water\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-34-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{visreg}\NormalTok{(gamModel,}\StringTok{\textquotesingle{}sp\textquotesingle{}}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-35-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{visreg}\NormalTok{(gamModel2,}\StringTok{\textquotesingle{}sp\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-35-2.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{visreg}\NormalTok{(gamModel,}\StringTok{\textquotesingle{}cagg\textquotesingle{}}\NormalTok{) }
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-36-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{visreg}\NormalTok{(gamModel2,}\StringTok{\textquotesingle{}cagg\textquotesingle{}}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\includegraphics{Assignment-03_files/figure-latex/unnamed-chunk-36-2.pdf}
+
+The CEM graph shows that the confidence interval after using the
+smoothing function has a higher value than the model before applying the
+smoothing function.
+
+\end{document}
